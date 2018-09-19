@@ -2,6 +2,9 @@ package com.sap.controllers;
 
 import com.sap.Service.UserService;
 import com.sap.models.User;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,11 +33,23 @@ public class UserController {
             return "login";
         }
 
+        String encryptedPassword = passwordEncoder().encode(pass);
         this.user.setUsername(username);
-        this.user.setPassword(pass);
+        this.user.setPassword(encryptedPassword);
         this.user.setOwner(true);
-        userService.addUser(this.user);
-        model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
+
+        try {
+            userService.addUser(this.user);
+            model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
+        }catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
+
         return "login";
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
