@@ -43,6 +43,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>4.3.1.RELEASE</version>
@@ -184,5 +189,53 @@
             <artifactId>hibernate-validator</artifactId>
             <version>5.4.1.Final</version>
         </dependency>
+
+
+
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>5.0.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>5.0.8.RELEASE</version>
+        </dependency>
+
+
+
     </dependencies>
+
+    <repositories>
+        <!--&lt;!&ndash; ... possibly other repository elements ... &ndash;&gt;-->
+        <repository>
+            <id>spring-milestone</id>
+            <name>Spring Milestone Repository</name>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
+
+    <!-- \\... Spring Security configuration ... -->
+
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.security</groupId>-->
+            <!--<artifactId>spring-security-web</artifactId>-->
+            <!--<version>5.0.8.RELEASE</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.security</groupId>-->
+            <!--<artifactId>spring-security-config</artifactId>-->
+            <!--<version>5.0.8.RELEASE</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.thymeleaf.extras</groupId>-->
+            <!--<artifactId>thymeleaf-extras-springsecurity4</artifactId>-->
+            <!--<version>2.1.2.RELEASE</version>-->
+        <!--</dependency>-->
+
+
+    <!-- ... Spring Security configuration ...// -->
+
 </project>
