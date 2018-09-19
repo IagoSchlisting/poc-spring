@@ -133,8 +133,19 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
+
+
                         <div class="col-lg-12">
-                        <form:form id="login-form" action="/login" name="user" method="post" style="display: block">
+
+                            <c:if test="${not empty error}">
+                                <div class="alert alert-danger">${error}</div>
+                            </c:if>
+                            <c:if test="${not empty msg}">
+                                <div class="alert alert-info">${msg}</div>
+                            </c:if>
+
+                            <%--<form name='loginForm' action="<c:url value='j_spring_security_check' />" method="post" style="display: block">--%>
+                            <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: block">
                             <%--<form id="login-form" action="/login" method="post" style="display: block;">--%>
                                 <div class="form-group">
                                     <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
@@ -149,19 +160,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                </form:form>
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                            </form:form>
+                            <%--</form>--%>
 
                             <form:form id="register-form" action="/register" name="user" method="post" style="display: none">
 
                             <%--<form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">--%>
                                 <div class="form-group">
-                                    <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    <input type="text" name="username" id="_username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>
                                 <div class="form-group">
                                     <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                    <input type="password" name="password" id="_password" tabindex="2" class="form-control" placeholder="Password">
                                 </div>
                                 <div class="form-group">
                                     <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
