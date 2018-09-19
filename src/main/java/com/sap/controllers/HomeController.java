@@ -2,12 +2,20 @@ package com.sap.controllers;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import com.sap.Service.UserService;
+
+import javax.annotation.Resource;
+
 
 @Controller
 public class HomeController {
 
+    @Resource
+    private UserService userService;
+
     @RequestMapping("/")
-    public String homepage(){
+    public String homepage(Model model){
+        model.addAttribute("users", userService.listUsers());
         return "homepage";
     }
 

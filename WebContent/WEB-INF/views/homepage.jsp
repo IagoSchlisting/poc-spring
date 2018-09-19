@@ -24,6 +24,28 @@
            value="${_csrf.token}" />
 </form>
 
+
+<div class="container">
+    <table class="table table-striped">
+        <tr>
+            <td> id </td>
+            <td> Username </td>
+            <td> owner </td>
+            <td> password </td>
+        </tr>
+        <c:forEach var="user" items="${users}">
+        <tr>
+            <td> ${user.id} </td>
+            <td> ${user.username}</td>
+            <td> ${user.owner} </td>
+            <td> ${user.password} </td>
+        </tr>
+        </c:forEach>
+
+    </table>
+</div>
+
+
 </body>
 
 <script>

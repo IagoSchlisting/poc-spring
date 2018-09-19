@@ -9,4 +9,9 @@
     <context:annotation-config/>
     <mvc:annotation-driven/>
 
+    <bean name="userService" class="com.sap.Service.impl.UserServiceImp">
+    </bean>
+    <bean name="userDao" class="com.sap.Dao.impl.UserDaoImp">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 </beans>

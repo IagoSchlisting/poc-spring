@@ -165,19 +165,16 @@
                             <%--</form>--%>
 
                             <form:form id="register-form" action="/register" name="user" method="post" style="display: none">
-
                             <%--<form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">--%>
+                                <%--<input type="hidden" id="owner" name="owner" value="1">--%>
                                 <div class="form-group">
-                                    <input type="text" name="username" id="_username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                    <input type="text" name="new_username" id="new_username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                    <input type="password" name="new_password" id="new_password" tabindex="2" class="form-control" placeholder="Password">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" name="password" id="_password" tabindex="2" class="form-control" placeholder="Password">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" name="confirm-password" id="confirm-password" tabindex="2" class="form-control" placeholder="Confirm Password">
+                                    <input type="password" name="confirm_password" id="confirm_password" tabindex="2" class="form-control" placeholder="Confirm Password">
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
