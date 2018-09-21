@@ -14,4 +14,11 @@
     <bean name="userDao" class="com.sap.Dao.impl.UserDaoImp">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
+
+    <bean name="roleService" class="com.sap.Service.impl.RoleServiceImp">
+    </bean>
+    <bean name="roleDao" class="com.sap.Dao.impl.RoleDaoImp">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
 </beans>

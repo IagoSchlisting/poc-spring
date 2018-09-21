@@ -28,18 +28,38 @@
 <div class="container">
     <table class="table table-striped">
         <tr>
-            <td> id </td>
+            <td> ID </td>
             <td> Username </td>
-            <td> owner </td>
-            <td> password </td>
+            <td> Password </td>
+            <td> Roles </td>
         </tr>
         <c:forEach var="user" items="${users}">
         <tr>
             <td> ${user.id} </td>
             <td> ${user.username}</td>
-            <td> ${user.owner} </td>
             <td> ${user.password} </td>
+            <td style="background-color: red">
+                <c:forEach var="role" items="${user.roles}">
+                    <p style="color: white"><c:out value = "${role.role} -- "/></p>
+                </c:forEach>
+            </td>
         </tr>
+        </c:forEach>
+
+    </table>
+</div>
+
+<div class="container">
+    <table class="table table-striped">
+        <tr>
+            <td> ID </td>
+            <td> Role </td>
+        </tr>
+        <c:forEach var="role" items="${roles}">
+            <tr>
+                <td> ${role.id} </td>
+                <td> ${role.role}</td>
+            </tr>
         </c:forEach>
 
     </table>

@@ -1,4 +1,5 @@
 package com.sap.controllers;
+import com.sap.Service.RoleService;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,13 @@ public class HomeController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private RoleService roleService;
+
     @RequestMapping("/")
     public String homepage(Model model){
         model.addAttribute("users", userService.listUsers());
+        model.addAttribute("roles", roleService.listRoles());
         return "homepage";
     }
 

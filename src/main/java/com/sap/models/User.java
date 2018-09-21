@@ -1,9 +1,13 @@
 package com.sap.models;
 
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "USER")
+@Repository
 public class User {
 
     @Id
@@ -16,7 +20,17 @@ public class User {
 
     private String password;
 
-    private Boolean owner;
+    //@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    //private List<Role> roles;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "User_Roles",
+            joinColumns = { @JoinColumn(name = "USER_ID") },
+            inverseJoinColumns = { @JoinColumn(name = "ROLE_ID") }
+    )
+    private List<Role> roles;
+
 
     public Integer getId() {
         return id;
@@ -42,11 +56,13 @@ public class User {
         this.password = password;
     }
 
-    public Boolean getOwner() {
-        return owner;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setOwner(Boolean owner) {
-        this.owner = owner;
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
+
+
 }
