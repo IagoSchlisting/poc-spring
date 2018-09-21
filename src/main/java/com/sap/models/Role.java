@@ -12,6 +12,7 @@ public class Role {
     @Column(name = "ROLE_ID")
     private Integer id;
 
+    @Column(unique = true)
     private String role;
 
 //    @ManyToMany(fetch = FetchType.EAGER)
@@ -41,11 +42,4 @@ public class Role {
         this.role = role;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 }

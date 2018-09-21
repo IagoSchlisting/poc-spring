@@ -18,6 +18,14 @@ public class HomeController {
     private RoleService roleService;
 
     @RequestMapping("/")
+    public String teste(Model model){
+        model.addAttribute("users", userService.listUsers());
+        model.addAttribute("roles", roleService.listRoles());
+        return "teste";
+    }
+
+
+    @RequestMapping("/homepage")
     public String homepage(Model model){
         model.addAttribute("users", userService.listUsers());
         model.addAttribute("roles", roleService.listRoles());

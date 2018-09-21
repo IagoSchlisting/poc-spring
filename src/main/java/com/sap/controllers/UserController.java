@@ -46,9 +46,16 @@ public class UserController {
         String encryptedPassword = passwordEncoder().encode(pass);
         this.user.setUsername(username);
         this.user.setPassword(encryptedPassword);
+        this.user.setEnabled(true);
+
+        if(roleService.getRoleById(1) == null){
+            Role new_role = new Role();
+            new_role.setRole("ROLE_OWNER");
+            roleService.addRole(new_role);
+        }
+        Role role = roleService.getRoleById(1);
 
         List<Role> roles = new ArrayList<Role>();
-        Role role = this.roleService.getRoleById(1);
         roles.add(role);
         this.user.setRoles(roles);
 
@@ -68,13 +75,13 @@ public class UserController {
 //    }
 
 
-    @RequestMapping(value = "/create/role")
-    public String createRoles(){
-        Role role = new Role();
-        role.setRole("ROLE_OWNER");
-        this.roleService.addRole(role);
-        return "homepage";
-    }
+//    @RequestMapping(value = "/create/role")
+//    public String createRoles(){
+//        Role role = new Role();
+//        role.setRole("ROLE_OWNER");
+//        roleService.addRole(role);
+//        return "homepage";
+//    }
 
 
     @Bean
