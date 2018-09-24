@@ -9,7 +9,7 @@ import java.lang.annotation.ElementType;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ContextConfiguration(value = {"file:WebContent/WEB-INF/training-servlet.xml",
+@ContextConfiguration(value = {"file:WebContent/WEB-INF/poc-spring-servlet.xml",
         "classpath:/resources/testApplicationContext.xml",
         "classpath:/resources/mock-beans.xml"})
 

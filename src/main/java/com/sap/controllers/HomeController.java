@@ -31,9 +31,10 @@ public class HomeController {
     public String initialPage(Model model, WebRequest request){
         User user = userService.getUserByName(request.getUserPrincipal().getName());
         model.addAttribute("principal", user);
+        model.addAttribute("team", user.getTeam());
+
         for (Role role: user.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
-                model.addAttribute("team", user.getTeam());
                 model.addAttribute("members", this.userService.listUsers(user.getTeam().getId(), user.getId()));
                 return "ownerpage";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){

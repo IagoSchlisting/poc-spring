@@ -5,7 +5,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.sap</groupId>
-    <artifactId>training</artifactId>
+    <artifactId>poc-spring</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <properties>
@@ -27,7 +27,7 @@
                 <configuration>
                     <warSourceDirectory>WebContent</warSourceDirectory>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
-                    <warName>training</warName>
+                    <warName>poc-spring</warName>
                 </configuration>
             </plugin>
             <plugin>

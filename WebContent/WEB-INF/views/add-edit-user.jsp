@@ -71,6 +71,7 @@
                 <input type="text" class="form-control" id="username" name="username"
                        value="<c:if test="${not empty user}">  ${user.username}  </c:if>">
             </div>
+                <a href="/" class="btn btn-danger"> Back </a>
             <button type="submit" class="btn btn-primary">
                 Save
             </button>
