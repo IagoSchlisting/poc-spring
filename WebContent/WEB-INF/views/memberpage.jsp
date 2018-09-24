@@ -10,10 +10,10 @@
 
 <html>
 <head>
-    <title> TESTE  </title>
+    <title> Member Page  </title>
 </head>
 <body>
-<h1> You are in! </h1>
+<h1> You are in ${principal.username}! </h1>
 
 <c:url value="/logout" var="logoutUrl" />
 
@@ -24,46 +24,6 @@
            value="${_csrf.token}" />
 </form>
 
-
-<div class="container">
-    <table class="table table-striped">
-        <tr>
-            <td> ID </td>
-            <td> Username </td>
-            <td> Password </td>
-            <td> Roles </td>
-        </tr>
-        <c:forEach var="user" items="${users}">
-            <tr>
-                <td> ${user.id} </td>
-                <td> ${user.username}</td>
-                <td> ${user.password} </td>
-                <td style="background-color: red">
-                    <c:forEach var="role" items="${user.roles}">
-                        <p style="color: white"><c:out value = "${role.role} -- "/></p>
-                    </c:forEach>
-                </td>
-            </tr>
-        </c:forEach>
-
-    </table>
-</div>
-
-<div class="container">
-    <table class="table table-striped">
-        <tr>
-            <td> ID </td>
-            <td> Role </td>
-        </tr>
-        <c:forEach var="role" items="${roles}">
-            <tr>
-                <td> ${role.id} </td>
-                <td> ${role.role}</td>
-            </tr>
-        </c:forEach>
-
-    </table>
-</div>
 
 
 </body>

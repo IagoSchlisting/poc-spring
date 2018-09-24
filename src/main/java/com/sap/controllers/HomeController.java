@@ -1,11 +1,16 @@
 package com.sap.controllers;
 import com.sap.Service.RoleService;
+import com.sap.models.Role;
+import com.sap.models.User;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.sap.Service.UserService;
+import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 
 
 @Controller
@@ -18,18 +23,17 @@ public class HomeController {
     private RoleService roleService;
 
     @RequestMapping("/")
-    public String teste(Model model){
-        model.addAttribute("users", userService.listUsers());
-        model.addAttribute("roles", roleService.listRoles());
-        return "teste";
-    }
-
-
-    @RequestMapping("/homepage")
-    public String homepage(Model model){
-        model.addAttribute("users", userService.listUsers());
-        model.addAttribute("roles", roleService.listRoles());
-        return "homepage";
+    public String initialPage(Model model, WebRequest request){
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
+        model.addAttribute("principal", user);
+        for (Role role: user.getRoles()){
+            if(new String(role.getRole()).equals("ROLE_OWNER")){
+                return "ownerpage";
+            }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
+                return "memberpage";
+            }
+        }
+        return "login";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

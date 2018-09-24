@@ -11,7 +11,8 @@
     <!-- Data Source -->
     <bean id="dataSourceDefault" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="org.hsqldb.jdbcDriver"/>
-        <property name="url" value="jdbc:hsqldb:file:/home/I867174/Desktop/WikiDB2222/;hsqldb.lock_file=false;shutdown=true;"/>
+        <!--<property name="url" value="jdbc:hsqldb:file:/home/I867174/Desktop/WikiDB2222/;hsqldb.lock_file=false;shutdown=true;"/>-->
+        <property name="url" value="jdbc:hsqldb:file:C:\Users\i500738\Desktop\db;hsqldb.lock_file=false;shutdown=true;"/>
         <property name="username" value="SA"/>
         <property name="password" value=""/>
         <property name="initialSize" value="1"/>

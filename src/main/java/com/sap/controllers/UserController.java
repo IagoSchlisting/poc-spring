@@ -47,17 +47,7 @@ public class UserController {
         this.user.setUsername(username);
         this.user.setPassword(encryptedPassword);
         this.user.setEnabled(true);
-
-        if(roleService.getRoleById(1) == null){
-            Role new_role = new Role();
-            new_role.setRole("ROLE_OWNER");
-            roleService.addRole(new_role);
-        }
-        Role role = roleService.getRoleById(1);
-
-        List<Role> roles = new ArrayList<Role>();
-        roles.add(role);
-        this.user.setRoles(roles);
+        giveRoles();
 
         try {
             userService.addUser(this.user);
@@ -68,21 +58,27 @@ public class UserController {
         return "login";
     }
 
-//    @ResponseBody
-//    @RequestMapping(value = "/create/role", method = RequestMethod.POST)
-//    public void createItem(@RequestBody Role role){
-//        roleService.addRole(role);
-//    }
+    public void giveRoles(){
+        List<Role> roles = new ArrayList<Role>();
 
+        if(roleService.getRoleById(1) == null){
+            Role new_role_user = new Role();
+            new_role_user.setRole("ROLE_USER");
+            roleService.addRole(new_role_user);
+        }
+        Role role_user = roleService.getRoleById(1);
 
-//    @RequestMapping(value = "/create/role")
-//    public String createRoles(){
-//        Role role = new Role();
-//        role.setRole("ROLE_OWNER");
-//        roleService.addRole(role);
-//        return "homepage";
-//    }
+        if(roleService.getRoleById(2) == null){
+            Role new_role_owner = new Role();
+            new_role_owner.setRole("ROLE_OWNER");
+            roleService.addRole(new_role_owner);
+        }
+        Role role_owner = roleService.getRoleById(2);
 
+        roles.add(role_user);
+        roles.add(role_owner);
+        this.user.setRoles(roles);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

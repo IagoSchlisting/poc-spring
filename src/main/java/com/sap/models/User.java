@@ -23,9 +23,6 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
 
-    //@ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
-    //private List<Role> roles;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "User_Roles",

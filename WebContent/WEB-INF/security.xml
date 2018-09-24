@@ -7,9 +7,9 @@
 						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <http auto-config="true">
-        <intercept-url pattern="/homepage" access="hasRole('ROLE_OWNER')" />
+        <intercept-url pattern="/" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/login" access="permitAll" />
-        <intercept-url pattern="/" access="permitAll" />
+
 
         <form-login
                 login-page="/login"
@@ -40,23 +40,5 @@
         </authentication-provider>
     </authentication-manager>
     <b:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
-
-    <!--<authentication-manager>-->
-        <!--<authentication-provider>-->
-            <!--<password-encoder ref="passwordEncoder" />-->
-            <!--<user-service>-->
-                <!--<user name="iago" password="1234" authorities="ROLE_OWNER" />-->
-                <!--<user name="joao" password="1234" authorities="ROLE_MEMBER" />-->
-            <!--</user-service>-->
-
-        <!--</authentication-provider>-->
-    <!--</authentication-manager>-->
-    <!---->
-    <!--<b:bean id ="passwordEncoder" class="org.springframework.security.crypto.password.NoOpPasswordEncoder" factory-method="getInstance"/>-->
-
-    <!--<user-service>-->
-        <!--<user name="iago" password="$2a$10$W.dESyQD8lLjdp.5.uwM3u3leGAxQZXekJza7bTRL3Bs3WZVD9MJm" authorities="ROLE_OWNER" />-->
-    <!--</user-service>-->
-
 
 </b:beans>
