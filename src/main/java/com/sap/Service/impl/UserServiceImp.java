@@ -1,6 +1,7 @@
 package com.sap.Service.impl;
 import com.sap.Dao.UserDao;
 import com.sap.Service.UserService;
+import com.sap.models.Team;
 import com.sap.models.User;
 
 import javax.annotation.Resource;
@@ -25,8 +26,8 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public List<User> listUsers() {
-        return this.userDao.listUsers();
+    public List<User> listUsers(int team_id, int user_id) {
+        return this.userDao.listUsers(team_id, user_id);
     }
 
     @Override

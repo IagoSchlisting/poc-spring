@@ -1,8 +1,10 @@
 package com.sap.controllers;
 
 import com.sap.Service.RoleService;
+import com.sap.Service.TeamService;
 import com.sap.Service.UserService;
 import com.sap.models.Role;
+import com.sap.models.Team;
 import com.sap.models.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,13 +24,17 @@ public class UserController {
     @Resource
     private User user;
     @Resource
+    private Team team;
+    @Resource
     private  UserService userService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private TeamService teamService;
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    private String Register(Model model, WebRequest request){
+    private String registerOwner(Model model, WebRequest request){
 
         if(request.getParameter("new_username").isEmpty() ||
                 request.getParameter("new_password").isEmpty()){
@@ -50,7 +56,10 @@ public class UserController {
         this.user.setUsername(username);
         this.user.setPassword(encryptedPassword);
         this.user.setEnabled(true);
+
         giveRoles(false);
+        createOwnersTeam(username);
+        this.user.setTeam(this.team);
 
         try {
             userService.addUser(this.user);
@@ -61,10 +70,19 @@ public class UserController {
         return "login";
     }
 
+    public void createOwnersTeam(String username){
+        this.team = new Team();
+        this.team.setName(username + "'s team");
+        this.teamService.addTeam(this.team);
+    }
+
+
     @RequestMapping("/user/delete/{id}")
-    public String removeUser(@PathVariable("id") int id, Model model){
+    public String removeUser(@PathVariable("id") int id, Model model, WebRequest request){
         userService.removeUser(id);
-        model.addAttribute("members", userService.listUsers());
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
+        model.addAttribute("team", user.getTeam());
+        model.addAttribute("members", userService.listUsers(user.getTeam().getId(), user.getId()));
         return "ownerpage";
     }
 
@@ -88,12 +106,16 @@ public class UserController {
             return "add-edit-user";
         }
 
+        Team team = userService.getUserByName(request.getUserPrincipal().getName()).getTeam();
+
         this.user = new User();
         String username = request.getParameter("username");
         String encryptedPassword = passwordEncoder().encode("password");
         this.user.setUsername(username);
         this.user.setPassword(encryptedPassword);
         this.user.setEnabled(true);
+
+        this.user.setTeam(team);
 
         giveRoles(true);
 
@@ -119,8 +141,6 @@ public class UserController {
         }
         return "add-edit-user";
     }
-
-
 
     public void giveRoles(Boolean member){
         List<Role> roles = new ArrayList<Role>();

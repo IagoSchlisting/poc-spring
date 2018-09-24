@@ -21,4 +21,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean name="teamService" class="com.sap.Service.impl.TeamServiceImp">
+    </bean>
+    <bean name="teamDao" class="com.sap.Dao.impl.TeamDaoImp">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
 </beans>

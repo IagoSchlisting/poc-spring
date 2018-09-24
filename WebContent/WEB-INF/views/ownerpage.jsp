@@ -45,12 +45,13 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"> TEAM xxx | Total members: xx </div>
+        <div class="panel-heading"> ${team.name} | </div>
         <div class="panel-body">
             <table class="table table-stripped">
                 <tr>
                     <th> ID </th>
                     <th> Member Name </th>
+                    <th> Team Name </th>
                     <th> Roles </th>
                     <th> Actions </th>
                 <tr>
@@ -58,6 +59,7 @@
                 <tr>
                     <td> ${member.id} </td>
                     <td> ${member.username}</td>
+                    <td> ${member.team.name}</td>
                     <td> |
                         <c:forEach var="role" items="${member.roles}">
                             <c:out value = " ${role.role} |"/>
