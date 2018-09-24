@@ -15,14 +15,6 @@ public class Role {
     @Column(unique = true)
     private String role;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "User_Roles",
-//            joinColumns = { @JoinColumn(name = "ROLE_ID") },
-//            inverseJoinColumns = { @JoinColumn(name = "USER_ID") }
-//    )
-//    private List<User> users;
-
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
     private List<User> users;
 

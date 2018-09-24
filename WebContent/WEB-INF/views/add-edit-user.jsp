@@ -10,7 +10,7 @@
 
 <html>
 <head>
-    <title> Owner Page  </title>
+    <title> Owner User Manipulation  </title>
 </head>
 <body>
 
@@ -45,42 +45,41 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"> TEAM xxx | Total members: xx </div>
+        <div class="panel-heading">
+            <c:if test="${not empty user}">
+                Edit user ${user.id}
+            </c:if>
+            <c:if test="${empty user}">
+                Add new user
+            </c:if>
+        </div>
         <div class="panel-body">
-            <table class="table table-stripped">
-                <tr>
-                    <th> ID </th>
-                    <th> Member Name </th>
-                    <th> Roles </th>
-                    <th> Actions </th>
-                <tr>
-                <c:forEach var="member" items="${members}">
-                <tr>
-                    <td> ${member.id} </td>
-                    <td> ${member.username}</td>
-                    <td> |
-                        <c:forEach var="role" items="${member.roles}">
-                            <c:out value = " ${role.role} |"/>
-                        </c:forEach>
-                    </td>
-                    <td>
-                        <a href="/user/edit/${member.id}" class="btn btn-info"> Edit </a>
-                        <a href="/user/delete/${member.id}" class="btn btn-danger"> Delete </a>
-                    </td>
-                </tr>
-                </c:forEach>
-                <tr>
-                    <td colspan="4"> <a href="/user/add" class="btn btn-primary"> Add new Member </a> </td>
-                <tr>
-            </table>
+
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger">${error}</div>
+            </c:if>
+            <c:if test="${not empty msg}">
+                <div class="alert alert-info">${msg}</div>
+            </c:if>
+
+
+            <c:if test="${empty user}">  <form action="/user/add" method="post">  </c:if>
+                <c:if test="${not empty user}">  <form action="/user/edit" method="post">  </c:if>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <c:if test="${not empty user}"> <input type="hidden" name="id" id="id" value="${user.id}">  </c:if>
+                <input type="text" class="form-control" id="username" name="username"
+                       value="<c:if test="${not empty user}">  ${user.username}  </c:if>">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Save
+            </button>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+            </form>
         </div>
         <div class="panel-footer"> @POC/SPRING - Iago Machado </div>
     </div>
 </div>
-
-
-
-
 
 
 </body>

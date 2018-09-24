@@ -28,6 +28,7 @@ public class HomeController {
         model.addAttribute("principal", user);
         for (Role role: user.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
+                model.addAttribute("members", userService.listUsers());
                 return "ownerpage";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
                 return "memberpage";

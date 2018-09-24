@@ -9,10 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
@@ -33,6 +30,12 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     private String Register(Model model, WebRequest request){
 
+        if(request.getParameter("new_username").isEmpty() ||
+                request.getParameter("new_password").isEmpty()){
+            model.addAttribute("error", "Username or pass can't be empty!");
+            return "login";
+        }
+
         this.user = new User();
         String username = request.getParameter("new_username");
         String pass = request.getParameter("new_password");
@@ -47,7 +50,7 @@ public class UserController {
         this.user.setUsername(username);
         this.user.setPassword(encryptedPassword);
         this.user.setEnabled(true);
-        giveRoles();
+        giveRoles(false);
 
         try {
             userService.addUser(this.user);
@@ -58,7 +61,68 @@ public class UserController {
         return "login";
     }
 
-    public void giveRoles(){
+    @RequestMapping("/user/delete/{id}")
+    public String removeUser(@PathVariable("id") int id, Model model){
+        userService.removeUser(id);
+        model.addAttribute("members", userService.listUsers());
+        return "ownerpage";
+    }
+
+    @RequestMapping("/user/edit/{id}")
+    public String editUser(@PathVariable("id") int id, Model model){
+        User user = userService.getUserById(id);
+        model.addAttribute("user", user);
+        return "add-edit-user";
+    }
+
+    @RequestMapping(value = "/user/add", method = RequestMethod.GET)
+    public String addUser(){
+        return "add-edit-user";
+    }
+
+    @RequestMapping(value = "/user/add", method = RequestMethod.POST)
+    public String saveUser(Model model, WebRequest request){
+
+        if(request.getParameter("username").isEmpty()){
+            model.addAttribute("error", "Username can't be empty!");
+            return "add-edit-user";
+        }
+
+        this.user = new User();
+        String username = request.getParameter("username");
+        String encryptedPassword = passwordEncoder().encode("password");
+        this.user.setUsername(username);
+        this.user.setPassword(encryptedPassword);
+        this.user.setEnabled(true);
+
+        giveRoles(true);
+
+        try {
+            userService.addUser(this.user);
+            model.addAttribute("msg", "New member registered successfully!");
+        }catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
+        return "add-edit-user";
+    }
+
+
+    @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
+    public String saveEditedUser(Model model, WebRequest request){
+        this.user = this.userService.getUserById(Integer.parseInt(request.getParameter("id")));
+        this.user.setUsername(request.getParameter("username"));
+        try {
+            userService.updateUser(this.user);
+            model.addAttribute("msg", "Member edited successfully!");
+        }catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
+        return "add-edit-user";
+    }
+
+
+
+    public void giveRoles(Boolean member){
         List<Role> roles = new ArrayList<Role>();
 
         if(roleService.getRoleById(1) == null){
@@ -68,6 +132,7 @@ public class UserController {
         }
         Role role_user = roleService.getRoleById(1);
 
+
         if(roleService.getRoleById(2) == null){
             Role new_role_owner = new Role();
             new_role_owner.setRole("ROLE_OWNER");
@@ -75,8 +140,16 @@ public class UserController {
         }
         Role role_owner = roleService.getRoleById(2);
 
+        if(roleService.getRoleById(3) == null){
+            Role new_role_member = new Role();
+            new_role_member.setRole("ROLE_MEMBER");
+            roleService.addRole(new_role_member);
+        }
+        Role role_member = roleService.getRoleById(3);
+
         roles.add(role_user);
-        roles.add(role_owner);
+        if(!member){ roles.add(role_owner); }
+        else { roles.add(role_member); }
         this.user.setRoles(roles);
     }
 

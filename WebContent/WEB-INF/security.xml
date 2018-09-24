@@ -8,6 +8,7 @@
 
     <http auto-config="true">
         <intercept-url pattern="/" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/user/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/login" access="permitAll" />
 
 
