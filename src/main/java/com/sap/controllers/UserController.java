@@ -283,7 +283,6 @@ public class UserController {
         return "changepass";
     }
 
-
     /**
      * Encrypts the user's password before saving in the database
      * @return the new encrypted password

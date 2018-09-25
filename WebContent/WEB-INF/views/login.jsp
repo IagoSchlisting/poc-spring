@@ -192,30 +192,21 @@
 <script>
     $(function() {
 
-        $('#login-form-link').click(function(e) {
-            $("#login-form").delay(100).fadeIn(100);
-            $("#register-form").fadeOut(100);
-            $('#register-form-link').removeClass('active');
-            $(this).addClass('active');
-            e.preventDefault();
-        });
-
-        $('#register-form-link').click(function(e) {
-            changeScreen(100);
-        });
+        $('#login-form-link').click(function(e) {  changeScreen(100, 'login');  });
+        $('#register-form-link').click(function(e) { changeScreen(100, 'register'); });
 
         <c:if test="${not empty stay}">
-            changeScreen(0);
+            changeScreen(0, 'register');
         </c:if>
 
-        function changeScreen(delay){
-            $("#register-form").delay(delay).fadeIn(delay);
-            $("#login-form").fadeOut(delay);
-            $('#login-form-link').removeClass('active');
+        function changeScreen(delay, goto){
+            $("#"+goto+"-form").delay(delay).fadeIn(delay);
+            var other = goto == 'register' ? 'login' : 'register';
+            $("#"+other+"-form").fadeOut(delay);
+            $("#"+other+"-form").removeClass('active');
             $(this).addClass('active');
             e.preventDefault();
         }
-
     });
 
 </script>
