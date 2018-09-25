@@ -1,8 +1,6 @@
 package com.sap.Dao;
 
-import com.sap.models.Team;
 import com.sap.models.User;
-
 import java.util.List;
 
 public interface UserDao {

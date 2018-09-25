@@ -1,5 +1,4 @@
 package com.sap.Service.impl;
-
 import com.sap.Dao.TeamDao;
 import com.sap.Service.TeamService;
 import com.sap.models.Team;
@@ -14,10 +13,6 @@ public class TeamServiceImp implements TeamService {
     @Override
     public void addTeam(Team team){
         this.teamDao.addTeam(team);
-    }
-    @Override
-    public Team getTeamById(int id){
-        return this.teamDao.getTeamById(id);
     }
 
 }

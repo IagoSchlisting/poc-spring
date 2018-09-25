@@ -1,7 +1,6 @@
 package com.sap.Dao.impl;
 
 import com.sap.Dao.UserDao;
-import com.sap.models.Team;
 import com.sap.models.User;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;

@@ -11,10 +11,4 @@ public class TeamDaoImp extends HibernateDaoSupport implements TeamDao {
     public void addTeam(Team team) {
         getHibernateTemplate().save(team);
     }
-
-    @Override
-    public Team getTeamById(int id) {
-        Team team = getHibernateTemplate().get(Team.class, id);
-        return team;
-    }
 }
