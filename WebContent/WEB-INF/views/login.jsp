@@ -144,9 +144,8 @@
                                 <div class="alert alert-info">${msg}</div>
                             </c:if>
 
-                            <%--<form name='loginForm' action="<c:url value='j_spring_security_check' />" method="post" style="display: block">--%>
-                            <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: block">
-                            <%--<form id="login-form" action="/login" method="post" style="display: block;">--%>
+                                <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: block;">
+
                                 <div class="form-group">
                                     <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>
@@ -162,11 +161,8 @@
                                 </div>
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             </form:form>
-                            <%--</form>--%>
 
-                            <form:form id="register-form" action="/register" name="user" method="post" style="display: none">
-                            <%--<form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">--%>
-                                <%--<input type="hidden" id="owner" name="owner" value="1">--%>
+                            <form:form id="register-form" action="/register" name="user" method="post" style="display: none;">
                                 <div class="form-group">
                                     <input type="text" name="new_username" id="new_username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>
@@ -184,6 +180,8 @@
                                     </div>
                                 </div>
                             </form:form>
+
+
                         </div>
                     </div>
                 </div>
@@ -201,13 +199,22 @@
             $(this).addClass('active');
             e.preventDefault();
         });
+
         $('#register-form-link').click(function(e) {
-            $("#register-form").delay(100).fadeIn(100);
-            $("#login-form").fadeOut(100);
+            changeScreen(100);
+        });
+
+        <c:if test="${not empty stay}">
+            changeScreen(0);
+        </c:if>
+
+        function changeScreen(delay){
+            $("#register-form").delay(delay).fadeIn(delay);
+            $("#login-form").fadeOut(delay);
             $('#login-form-link').removeClass('active');
             $(this).addClass('active');
             e.preventDefault();
-        });
+        }
 
     });
 

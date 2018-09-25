@@ -42,6 +42,7 @@ public class UserController {
         if(request.getParameter("new_username").isEmpty() ||
                 request.getParameter("new_password").isEmpty()){
             model.addAttribute("error", "Username or password cannot be empty!");
+            model.addAttribute("stay", true);
             return "login";
         }
 
@@ -53,6 +54,7 @@ public class UserController {
         // Checking if passwords are equal and encrypting it
         if(!new String(pass).equals(confirm_pass)){
             model.addAttribute("error", "Passwords doesn't match!");
+            model.addAttribute("stay", true);
             return "login";
         }
         String encryptedPassword = passwordEncoder().encode(pass);
@@ -63,20 +65,20 @@ public class UserController {
         user.setPassword(encryptedPassword);
         user.setEnabled(true);
 
-        List<Role> roles = giveRoles(true); // If owner == true , then user receives owner access
-        Team team = createOwnersTeam(username); // Creates team based on owners username
-
-        user.setRoles(roles);
-        user.setTeam(team);
-
         try {
+            List<Role> roles = giveRoles(true); // If owner == true , then user receives owner access
+            Team team = createOwnersTeam(username); // Creates team based on owners username
+            user.setRoles(roles);
+            user.setTeam(team);
             userService.addUser(user);
             model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
         }catch (Exception e){
             // If not able to register, it will be spit a gross message in the screen.
             // ATTENTION: The most frequent error, it's trying to register an username witch already exists
+            model.addAttribute("stay", true);
             model.addAttribute("error", e.getMessage());
         }
+
         return "login";
     }
 
