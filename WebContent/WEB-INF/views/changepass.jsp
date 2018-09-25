@@ -10,7 +10,7 @@
 
 <html>
 <head>
-    <title> Owner User Manipulation  </title>
+    <title> Owner Page  </title>
 </head>
 <body>
 
@@ -46,16 +46,8 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading">
-            <c:if test="${not empty user}">
-                Edit user ${user.id}
-            </c:if>
-            <c:if test="${empty user}">
-                Add new user
-            </c:if>
-        </div>
+        <div class="panel-heading"> Change your password here. </div>
         <div class="panel-body">
-
             <c:if test="${not empty error}">
                 <div class="alert alert-danger">${error}</div>
             </c:if>
@@ -64,24 +56,35 @@
             </c:if>
 
 
-            <c:if test="${empty user}">  <form action="/user/add" method="post">  </c:if>
-                <c:if test="${not empty user}">  <form action="/user/edit" method="post">  </c:if>
-            <div class="form-group">
-                <label for="username">Username</label>
-                <c:if test="${not empty user}"> <input type="hidden" name="id" id="id" value="${user.id}">  </c:if>
-                <input type="text" class="form-control" id="username" name="username"
-                       value="<c:if test="${not empty user}">  ${user.username}  </c:if>">
-            </div>
+            <form action="/changepass" method="post">
+                <div class="form-group">
+                    <label for="old_password">Current Password</label>
+                    <input type="password" class="form-control" id="old_password" name="old_password">
+                </div>
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                </div>
+
                 <a href="/" class="btn btn-danger"> Back </a>
-            <button type="submit" class="btn btn-primary">
-                Save
-            </button>
+                <button type="submit" class="btn btn-primary">
+                    Change
+                </button>
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             </form>
+
         </div>
         <div class="panel-footer"> @POC/SPRING - Iago Machado </div>
     </div>
 </div>
+
+
+
+
 
 
 </body>

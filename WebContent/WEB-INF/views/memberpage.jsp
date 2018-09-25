@@ -35,6 +35,7 @@
                 <li class="dropdown">
                     <a href="/" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: green"> ${pageContext.request.userPrincipal.name} <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                        <li><a href="/changepass"> Change Password </a></li>
                         <li><a href="javascript:formSubmit()"> Logout </a></li>
                     </ul>
                 </li>
@@ -46,8 +47,8 @@
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading" style="min-height: 45px">
-            <div class="col-md-6">Feel free to manage your shifts </div>
-            <div class="col-md-6" align="right"> You are from ${team.name} </div>
+            <div class="col-md-6"> Shifts Manager </div>
+            <div class="col-md-6" align="right"> You are from <strong>${team.name}</strong> </div>
         </div>
         <div class="panel-body">
 

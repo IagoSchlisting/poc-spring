@@ -228,6 +228,63 @@ public class UserController {
     }
 
     /**
+     * Only redirects to the changepass user's page
+     * @return changepass page
+     */
+    @RequestMapping(value = "/changepass", method = RequestMethod.GET)
+    public String changePass(){
+        return "changepass";
+    }
+
+    /**
+     * Allows user to change password when needed
+     * @param model
+     * @param request
+     * @return success or error message in the changepass page
+     */
+    @RequestMapping(value = "/changepass", method = RequestMethod.POST)
+    public String changePassdb(Model model, WebRequest request){
+
+        String oldpass = request.getParameter("old_password");
+        String newpass = request.getParameter("new_password");
+        String confirmpass = request.getParameter("confirm_password");
+
+        // Checking fields so they are not empty
+        if(oldpass.isEmpty() || newpass.isEmpty() || confirmpass.isEmpty()){
+            model.addAttribute("error", "Fields cannot be empty!");
+            return "changepass";
+        }
+
+        // Getting current user from Session
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
+        String userpass = user.getPassword();
+
+        if(!passwordEncoder().matches(oldpass, userpass)){
+            model.addAttribute("error", "Current pass doesn't match!");
+            return "changepass";
+        }
+
+        if(!new String(newpass).equals(confirmpass)){
+            model.addAttribute("error", "Passwords doesn't match!");
+            return "changepass";
+        }
+
+        String encryptedPassword = passwordEncoder().encode(newpass);
+
+        try{
+            user.setPassword(encryptedPassword);
+            userService.updateUser(user);
+            model.addAttribute("msg", "Password changed successfully!");
+        }
+        catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "changepass";
+    }
+
+
+    /**
      * Encrypts the user's password before saving in the database
      * @return the new encrypted password
      */
