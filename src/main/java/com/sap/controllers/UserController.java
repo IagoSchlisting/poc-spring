@@ -39,8 +39,7 @@ public class UserController {
     private String addOwner(Model model, WebRequest request){
 
         // Checking username and password so they are not empty
-        if(request.getParameter("new_username").isEmpty() ||
-                request.getParameter("new_password").isEmpty()){
+        if(request.getParameter("new_username").isEmpty() || request.getParameter("new_password").isEmpty()){
             model.addAttribute("error", "Username or password cannot be empty!");
             model.addAttribute("stay", true);
             return "login";
@@ -50,6 +49,13 @@ public class UserController {
         String username = request.getParameter("new_username");
         String pass = request.getParameter("new_password");
         String confirm_pass = request.getParameter("confirm_password");
+
+         //Validate username
+        if(userAlreadyExists(username)){
+            model.addAttribute("error", "Not possible to register the user in the system! Username already exists.");
+            model.addAttribute("stay", true);
+            return "login";
+        }
 
         // Checking if passwords are equal and encrypting it
         if(!new String(pass).equals(confirm_pass)){
@@ -74,12 +80,19 @@ public class UserController {
             model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
         }catch (Exception e){
             // If not able to register, it will be spit a gross message in the screen.
-            // ATTENTION: The most frequent error, it's trying to register an username witch already exists
             model.addAttribute("stay", true);
             model.addAttribute("error", e.getMessage());
         }
-
         return "login";
+    }
+
+    /**
+     * Verify if username already exists
+     * @param username
+     * @return boolean
+     */
+    public Boolean userAlreadyExists(String username){
+        return userService.getUserByName(username).getUsername() != null;
     }
 
     /**
@@ -173,13 +186,19 @@ public class UserController {
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     public String addMember(Model model, WebRequest request){
 
-        // Checking username is not empty
+        // Checking if username is not empty
         if(request.getParameter("username").isEmpty()){
             model.addAttribute("error", "Username can't be empty!");
             return "add-edit-user";
         }
         String username = request.getParameter("username");
         String encryptedPassword = passwordEncoder().encode("password");
+
+        //Validate username
+        if(userAlreadyExists(username)){
+            model.addAttribute("error", "Not possible to add the member! Username already exists.");
+            return "add-edit-user";
+        }
 
         // Get team from the principal user, who is registering the new member
         Team team = userService.getUserByName(request.getUserPrincipal().getName()).getTeam();
@@ -199,7 +218,6 @@ public class UserController {
             model.addAttribute("msg", "New member registered successfully!");
         }catch (Exception e){
             // If not able to add new member, it will be spit a gross message in the screen.
-            // ATTENTION: The most frequent error, it's trying to add an username witch already exists
             model.addAttribute("error", e.getMessage());
         }
         return "add-edit-user";
@@ -215,13 +233,20 @@ public class UserController {
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
     public String saveEditedMember(Model model, WebRequest request){
         User user = this.userService.getUserById(Integer.parseInt(request.getParameter("id")));
-        user.setUsername(request.getParameter("username"));
+        String username = request.getParameter("username");
+
+        //Validate username
+        if(userAlreadyExists(username)){
+            model.addAttribute("error", "Not possible to edit member! Username already exists.");
+            return "add-edit-user";
+        }
+
+        user.setUsername(username);
         try {
             userService.updateUser(user);
             model.addAttribute("msg", "Member edited successfully!");
         }catch (Exception e){
             // If not able to edit member, it will be spit a gross message in the screen.
-            // ATTENTION: The most frequent error, it's trying to edit to an username witch already exists
             model.addAttribute("error", e.getMessage());
         }
         return "add-edit-user";

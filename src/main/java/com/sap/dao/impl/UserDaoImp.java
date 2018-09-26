@@ -35,9 +35,13 @@ public class UserDaoImp extends HibernateDaoSupport implements UserDao {
     @Override
     public User getUserByName(String name){
         List<User> users;
-        String query = "from com.sap.models.User as u where username like '%" +name+ "%'";
+        String query = "from com.sap.models.User as u where username = '"+name+"'";
         users = (List<User>) getHibernateTemplate().find(query);
-        return users.get(0);
+
+        User user;
+        if(users.isEmpty()){ user = new User();}
+        else{user = users.get(0);}
+        return user;
     }
 
 
