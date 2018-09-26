@@ -4,6 +4,7 @@ import com.sap.service.TeamService;
 import com.sap.models.Team;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 public class TeamServiceImp implements TeamService {
 
@@ -13,6 +14,16 @@ public class TeamServiceImp implements TeamService {
     @Override
     public void addTeam(Team team){
         this.teamDao.addTeam(team);
+    }
+
+    @Override
+    public List<Team> listTeams(){
+        return this.teamDao.listTeams();
+    }
+
+    @Override
+    public Team getTeamById(int id){
+        return this.teamDao.getTeamById(id);
     }
 
 }

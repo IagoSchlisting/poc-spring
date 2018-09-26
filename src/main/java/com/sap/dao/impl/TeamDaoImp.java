@@ -4,11 +4,23 @@ import com.sap.models.Team;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public class TeamDaoImp extends HibernateDaoSupport implements TeamDao {
 
     @Override
     @Transactional
     public void addTeam(Team team) {
         getHibernateTemplate().save(team);
+    }
+
+    @Override
+    public List<Team> listTeams(){
+        return (List<Team>) getHibernateTemplate().find("from com.sap.models.Team");
+    }
+
+    @Override
+    public Team getTeamById(int id){
+        return getHibernateTemplate().get(Team.class, id);
     }
 }

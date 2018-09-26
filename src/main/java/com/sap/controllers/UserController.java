@@ -38,25 +38,23 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     private String addOwner(Model model, WebRequest request){
 
-        // Checking username and password so they are not empty
-        if(request.getParameter("new_username").isEmpty() || request.getParameter("new_password").isEmpty()){
-            model.addAttribute("error", "Username or password cannot be empty!");
-            model.addAttribute("stay", true);
-            return "login";
-        }
-
         // Getting data from form
         String username = request.getParameter("new_username");
         String pass = request.getParameter("new_password");
         String confirm_pass = request.getParameter("confirm_password");
 
+        // Checking username and password so they are not empty
+        if(username.isEmpty() || pass.isEmpty()){
+            model.addAttribute("error", "Username or password cannot be empty!");
+            model.addAttribute("stay", true);
+            return "login";
+        }
          //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to register the user in the system! Username already exists.");
             model.addAttribute("stay", true);
             return "login";
         }
-
         // Checking if passwords are equal and encrypting it
         if(!new String(pass).equals(confirm_pass)){
             model.addAttribute("error", "Passwords doesn't match!");
@@ -71,14 +69,16 @@ public class UserController {
         user.setPassword(encryptedPassword);
         user.setEnabled(true);
 
-        try {
+        try
+        {
             List<Role> roles = giveRoles(true); // If owner == true , then user receives owner access
             Team team = createOwnersTeam(username); // Creates team based on owners username
             user.setRoles(roles);
             user.setTeam(team);
             userService.addUser(user);
             model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
-        }catch (Exception e){
+        }
+        catch (Exception e){
             // If not able to register, it will be spit a gross message in the screen.
             model.addAttribute("stay", true);
             model.addAttribute("error", e.getMessage());
@@ -164,7 +164,9 @@ public class UserController {
     @RequestMapping("/user/edit/{id}")
     public String editMember(@PathVariable("id") int id, Model model){
         User user = userService.getUserById(id);
+        List<Team> teams = teamService.listTeams();
         model.addAttribute("user", user);
+        model.addAttribute("teams", teams);
         return "add-edit-user";
     }
 
@@ -186,23 +188,22 @@ public class UserController {
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     public String addMember(Model model, WebRequest request){
 
+        String username = request.getParameter("username");
         // Checking if username is not empty
-        if(request.getParameter("username").isEmpty()){
+        if(username.isEmpty()){
             model.addAttribute("error", "Username can't be empty!");
             return "add-edit-user";
         }
-        String username = request.getParameter("username");
-        String encryptedPassword = passwordEncoder().encode("password");
-
         //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to add the member! Username already exists.");
             return "add-edit-user";
         }
 
+        String encryptedPassword = passwordEncoder().encode("password");
         // Get team from the principal user, who is registering the new member
         Team team = userService.getUserByName(request.getUserPrincipal().getName()).getTeam();
-        // Get roles allowed
+        // Get roles allowed to the member user type
         List<Role> roles = giveRoles(false); // Gives only member access to the user
 
         // Creating new user
@@ -213,10 +214,12 @@ public class UserController {
         user.setRoles(roles);
         user.setTeam(team);
 
-        try {
+        try
+        {
             userService.addUser(user);
             model.addAttribute("msg", "New member registered successfully!");
-        }catch (Exception e){
+        }
+        catch (Exception e){
             // If not able to add new member, it will be spit a gross message in the screen.
             model.addAttribute("error", e.getMessage());
         }
@@ -233,6 +236,7 @@ public class UserController {
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
     public String saveEditedMember(Model model, WebRequest request){
         User user = this.userService.getUserById(Integer.parseInt(request.getParameter("id")));
+        Team team = this.teamService.getTeamById(Integer.parseInt(request.getParameter("team")));
         String username = request.getParameter("username");
 
         //Validate username
@@ -242,10 +246,14 @@ public class UserController {
         }
 
         user.setUsername(username);
-        try {
+        user.setTeam(team);
+
+        try
+        {
             userService.updateUser(user);
             model.addAttribute("msg", "Member edited successfully!");
-        }catch (Exception e){
+        }
+        catch (Exception e){
             // If not able to edit member, it will be spit a gross message in the screen.
             model.addAttribute("error", e.getMessage());
         }
@@ -276,7 +284,7 @@ public class UserController {
 
         // Checking fields so they are not empty
         if(oldpass.isEmpty() || newpass.isEmpty() || confirmpass.isEmpty()){
-            model.addAttribute("error", "Fields cannot be empty!");
+            model.addAttribute("error", "Fields can't be empty!");
             return "changepass";
         }
 
@@ -304,7 +312,6 @@ public class UserController {
         catch (Exception e){
             model.addAttribute("error", e.getMessage());
         }
-
         return "changepass";
     }
 
