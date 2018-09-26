@@ -1,12 +1,15 @@
 package com.sap.controllers;
-import com.sap.Service.RoleService;
+
+import com.sap.service.UserService;
 import com.sap.models.Role;
 import com.sap.models.User;
-import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import com.sap.Service.UserService;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
+
 import javax.annotation.Resource;
 
 @Controller

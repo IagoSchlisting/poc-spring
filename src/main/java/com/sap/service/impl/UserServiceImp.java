@@ -1,6 +1,6 @@
-package com.sap.Service.impl;
-import com.sap.Dao.UserDao;
-import com.sap.Service.UserService;
+package com.sap.service.impl;
+import com.sap.dao.UserDao;
+import com.sap.service.UserService;
 import com.sap.models.User;
 
 import javax.annotation.Resource;

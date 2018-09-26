@@ -1,6 +1,6 @@
-package com.sap.Service.impl;
-import com.sap.Dao.RoleDao;
-import com.sap.Service.RoleService;
+package com.sap.service.impl;
+import com.sap.dao.RoleDao;
+import com.sap.service.RoleService;
 import com.sap.models.Role;
 import javax.annotation.Resource;
 

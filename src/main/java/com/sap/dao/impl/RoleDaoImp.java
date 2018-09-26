@@ -1,6 +1,6 @@
-package com.sap.Dao.impl;
+package com.sap.dao.impl;
 
-import com.sap.Dao.RoleDao;
+import com.sap.dao.RoleDao;
 import com.sap.models.Role;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;

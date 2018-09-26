@@ -1,8 +1,6 @@
-package com.sap.Service;
+package com.sap.service;
 
 import com.sap.models.Role;
-
-import java.util.List;
 
 public interface RoleService {
     public void addRole(Role role);

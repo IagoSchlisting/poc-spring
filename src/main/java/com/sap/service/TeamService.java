@@ -1,4 +1,4 @@
-package com.sap.Service;
+package com.sap.service;
 
 import com.sap.models.Team;
 

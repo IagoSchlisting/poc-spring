@@ -1,8 +1,8 @@
 package com.sap.controllers;
 
-import com.sap.Service.RoleService;
-import com.sap.Service.TeamService;
-import com.sap.Service.UserService;
+import com.sap.service.RoleService;
+import com.sap.service.TeamService;
+import com.sap.service.UserService;
 import com.sap.models.Role;
 import com.sap.models.Team;
 import com.sap.models.User;
@@ -23,7 +23,7 @@ import java.util.List;
 public class UserController {
 
     @Resource
-    private  UserService userService;
+    private UserService userService;
     @Resource
     private RoleService roleService;
     @Resource

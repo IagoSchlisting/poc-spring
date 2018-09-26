@@ -9,21 +9,21 @@
     <context:annotation-config/>
     <mvc:annotation-driven/>
 
-    <bean name="userService" class="com.sap.Service.impl.UserServiceImp">
+    <bean name="userService" class="com.sap.service.impl.UserServiceImp">
     </bean>
-    <bean name="userDao" class="com.sap.Dao.impl.UserDaoImp">
+    <bean name="userDao" class="com.sap.dao.impl.UserDaoImp">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean name="roleService" class="com.sap.Service.impl.RoleServiceImp">
+    <bean name="roleService" class="com.sap.service.impl.RoleServiceImp">
     </bean>
-    <bean name="roleDao" class="com.sap.Dao.impl.RoleDaoImp">
+    <bean name="roleDao" class="com.sap.dao.impl.RoleDaoImp">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
-    <bean name="teamService" class="com.sap.Service.impl.TeamServiceImp">
+    <bean name="teamService" class="com.sap.service.impl.TeamServiceImp">
     </bean>
-    <bean name="teamDao" class="com.sap.Dao.impl.TeamDaoImp">
+    <bean name="teamDao" class="com.sap.dao.impl.TeamDaoImp">
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 

@@ -1,6 +1,6 @@
-package com.sap.Service.impl;
-import com.sap.Dao.TeamDao;
-import com.sap.Service.TeamService;
+package com.sap.service.impl;
+import com.sap.dao.TeamDao;
+import com.sap.service.TeamService;
 import com.sap.models.Team;
 
 import javax.annotation.Resource;

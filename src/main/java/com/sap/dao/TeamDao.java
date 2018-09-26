@@ -1,4 +1,4 @@
-package com.sap.Dao;
+package com.sap.dao;
 
 import com.sap.models.Team;
 

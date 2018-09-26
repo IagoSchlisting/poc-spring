@@ -1,5 +1,4 @@
-package com.sap.Service;
-import com.sap.models.Team;
+package com.sap.service;
 import com.sap.models.User;
 
 import java.util.List;
