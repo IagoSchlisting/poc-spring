@@ -1,8 +1,6 @@
 <b:beans xmlns="http://www.springframework.org/schema/security"
          xmlns:b="http://www.springframework.org/schema/beans"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/c"
-         xmlns:security="http://www.springframework.org/schema/security"
-         xmlns:bean="http://www.springframework.org/schema/mvc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
@@ -11,8 +9,6 @@
         <intercept-url pattern="/user/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/resources/**" access="permitAll" />
-
-
 
         <form-login
                 login-page="/login"
@@ -25,21 +21,14 @@
         <csrf/>
     </http>
 
-
     <authentication-manager alias="authenticationManager">
         <authentication-provider>
             <password-encoder ref="passwordEncoder" />
-
             <jdbc-user-service data-source-ref="dataSourceDefault"
-                                                             users-by-username-query="SELECT username, password, enabled FROM USER WHERE username = ?"
-                                                             authorities-by-username-query="SELECT u.username as username, r.role as authority
-                   FROM USER u INNER JOIN USER_ROLES ur ON u.user_id = ur.user_id
-                   INNER JOIN ROLE r ON ur.role_id = r.role_id
-                   WHERE u.username = ?"/>
-
-            <!--<user-service>-->
-                <!--<user name="iago" password="$2a$10$W.dESyQD8lLjdp.5.uwM3u3leGAxQZXekJza7bTRL3Bs3WZVD9MJm" authorities="ROLE_OWNER" />-->
-            <!--</user-service>-->
+            users-by-username-query="SELECT username, password, enabled FROM USER WHERE username = ?"
+            authorities-by-username-query="SELECT u.username as username, r.role as authority
+            FROM USER u INNER JOIN USER_ROLES ur ON u.user_id = ur.user_id
+            INNER JOIN ROLE r ON ur.role_id = r.role_id WHERE u.username = ?"/>
         </authentication-provider>
     </authentication-manager>
     <b:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>

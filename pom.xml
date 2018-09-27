@@ -30,14 +30,6 @@
                     <warName>poc-spring</warName>
                 </configuration>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<source>1.8</source>-->
-                    <!--<target>1.8</target>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
         </plugins>
     </build>
 
@@ -118,7 +110,7 @@
             <artifactId>javax.persistence</artifactId>
             <version>2.0.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate.javax.persistence/hibernate-jpa-2.1-api -->
+
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
@@ -145,13 +137,7 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.7</version>
         </dependency>
-        <!-- JSR-303 Hibernate Implementation -->
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-validator</artifactId>-->
-            <!--<version>5.2.4.Final</version>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -170,16 +156,6 @@
             <version>2.9.4</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.security</groupId>-->
-            <!--<artifactId>spring-security-web</artifactId>-->
-            <!--<version>4.2.3.RELEASE</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.security</groupId>-->
-            <!--<artifactId>spring-security-config</artifactId>-->
-            <!--<version>4.2.3.RELEASE</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
@@ -191,9 +167,6 @@
             <version>5.4.1.Final</version>
         </dependency>
 
-
-
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
@@ -204,11 +177,9 @@
             <artifactId>spring-security-config</artifactId>
             <version>5.0.8.RELEASE</version>
         </dependency>
-
     </dependencies>
 
     <repositories>
-        <!--&lt;!&ndash; ... possibly other repository elements ... &ndash;&gt;-->
         <repository>
             <id>spring-milestone</id>
             <name>Spring Milestone Repository</name>

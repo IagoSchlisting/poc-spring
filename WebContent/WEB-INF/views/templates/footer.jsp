@@ -1,5 +1,9 @@
         </div>
     </body>
-        <script src="resources/js/general.js"></script>
+        <script>
+            function formSubmit() {
+                document.getElementById("logoutForm").submit();
+            }
+        </script>
 </html>
 
