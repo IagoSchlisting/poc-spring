@@ -239,6 +239,10 @@ public class UserController {
         Team team = this.teamService.getTeamById(Integer.parseInt(request.getParameter("team")));
         String username = request.getParameter("username");
 
+        List<Team> teams = teamService.listTeams();
+        model.addAttribute("user", user);
+        model.addAttribute("teams", teams);
+
         //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to edit member! Username already exists.");
