@@ -29,7 +29,6 @@ public class HomeController {
     public String initialPage(Model model, WebRequest request){
         // Get current user
         User user = userService.getUserByName(request.getUserPrincipal().getName());
-
         // Return user and team information to the view
         model.addAttribute("principal", user);
         model.addAttribute("team", user.getTeam());
@@ -41,6 +40,7 @@ public class HomeController {
                 model.addAttribute("members", this.userService.listUsers(user.getTeam().getId(), user.getId()));
                 return "ownerpage";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
+                // Waiting for more code here
                 return "memberpage";
             }
         }

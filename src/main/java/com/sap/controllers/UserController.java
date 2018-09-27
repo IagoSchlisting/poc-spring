@@ -49,6 +49,7 @@ public class UserController {
             model.addAttribute("stay", true);
             return "login";
         }
+
          //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to register the user in the system! Username already exists.");
@@ -117,25 +118,16 @@ public class UserController {
         List<String> roles_string = Arrays.asList("ROLE_USER", "ROLE_OWNER", "ROLE_MEMBER");
         Role new_role;
 
-        for (int i = 0; i < roles_string.size(); i++) {
-            if(roleService.getRoleById(i+1) == null){
+        for (String role : roles_string) {
+            if (roleService.getRoleById(roles_string.indexOf(role) + 1) == null) {
                 new_role = new Role();
-                new_role.setRole(roles_string.get(i));
+                new_role.setRole(role);
                 roleService.addRole(new_role);
             }
-            new_role = roleService.getRoleById(i+1);
-            switch (i){
-                case 0:
-                    roles.add(new_role);
-                    break;
-                case 1:
-                    if(owner){roles.add(new_role);}
-                    break;
-                case 2:
-                    if(!owner){roles.add(new_role);}
-                    break;
-            }
         }
+        roles.add(roleService.getRoleById(1));
+        if(owner){roles.add(roleService.getRoleById(2));}
+        else{ roles.add(roleService.getRoleById(3));}
         return roles;
     }
 
