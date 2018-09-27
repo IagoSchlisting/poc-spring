@@ -68,4 +68,13 @@ public class HomeController {
         return "login";
     }
 
+    /**
+     * 403 Error page
+     * @return redirects
+     */
+    @RequestMapping("/403")
+    public String notFound(){
+        return "errors/403";
+    }
+
 }

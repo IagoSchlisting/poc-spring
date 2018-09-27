@@ -154,8 +154,21 @@ public class UserController {
      * @return edit page
      */
     @RequestMapping("/user/edit/{id}")
-    public String editMember(@PathVariable("id") int id, Model model){
+    public String editMember(@PathVariable("id") int id, Model model, WebRequest request){
+
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        // Owner cannot edit himself !IMPORTANT
+            if(principal.getId() == id){
+                return "errors/403";
+            }
+        // ------------------------
         User user = userService.getUserById(id);
+        // Owner cannot edit member that is not from his team !IMPORTANT
+            if(principal.getTeam().getId() != user.getTeam().getId()){
+                return "errors/403";
+            }
+        // ------------------------
+
         List<Team> teams = teamService.listTeams();
         model.addAttribute("user", user);
         model.addAttribute("teams", teams);
@@ -235,15 +248,18 @@ public class UserController {
         model.addAttribute("user", user);
         model.addAttribute("teams", teams);
 
+
+        if(username.isEmpty()){
+            model.addAttribute("error", "Username can't be empty!");
+            return "add-edit-user";
+        }
         //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to edit member! Username already exists.");
             return "add-edit-user";
         }
-
         user.setUsername(username);
         user.setTeam(team);
-
         try
         {
             userService.updateUser(user);

@@ -5,6 +5,7 @@
 						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <http auto-config="true">
+        <access-denied-handler error-page="/403" />
         <intercept-url pattern="/" access="hasRole('ROLE_USER')" />
         <intercept-url pattern="/user/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/login" access="permitAll" />
