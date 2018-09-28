@@ -73,7 +73,7 @@ public class HomeController {
      * @return redirects
      */
     @RequestMapping("/403")
-    public String notFound(){
+    public String notAllowed(){
         return "errors/403";
     }
 

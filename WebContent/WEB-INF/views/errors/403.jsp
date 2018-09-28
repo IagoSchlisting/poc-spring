@@ -62,7 +62,7 @@
     }
 
     .notfound .notfound-403 h1>span {
-        color: #00b7ff;
+        color: #d9534f;
     }
 
     .notfound h2 {
@@ -97,7 +97,7 @@
     }
 
     .notfound .notfound-search>input:focus {
-        border-color: #00b7ff;
+        border-color: #d9534f;
     }
 
     .notfound .notfound-search>button {
@@ -152,7 +152,7 @@
     }
 
     .notfound .notfound-search>button:hover>span:after {
-        border-color: #00b7ff;
+        border-color: #d9534f;
     }
 
     .notfound .notfound-search>button:hover>span:before {

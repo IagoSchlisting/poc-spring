@@ -28,7 +28,7 @@
                     <input type="hidden" name="id" id="id" value="${user.id}">
                 </c:if>
                 <input type="text" class="form-control" id="username" name="username"
-                       value="<c:if test="${not empty user}">  ${user.username}  </c:if>">
+                       value="<c:if test="${not empty user}">${user.username}</c:if>">
             </div>
 
             <c:if test="${not empty teams}">

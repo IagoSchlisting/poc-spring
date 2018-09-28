@@ -140,11 +140,33 @@ public class UserController {
      */
     @RequestMapping("/user/delete/{id}")
     public String removeMember(@PathVariable("id") int id, Model model, WebRequest request){
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+
+        if(notAuthorized(principal, id)){return "errors/403";}
+
         userService.removeUser(id);
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
-        model.addAttribute("team", user.getTeam());
-        model.addAttribute("members", userService.listUsers(user.getTeam().getId(), user.getId()));
+        model.addAttribute("team", principal.getTeam());
+        model.addAttribute("members", userService.listUsers(principal.getTeam().getId(), principal.getId()));
         return "ownerpage";
+    }
+
+    /**
+     * Verify if user is not trying to execute an action at himself or at some member that is not from his team.
+     * @param principal
+     * @param id
+     * @return Boolean
+     */
+    public Boolean notAuthorized(User principal, int id) {
+        // User cannot execute action at himself !IMPORTANT
+        if (principal.getId() == id) {
+            return true;
+        }
+        User user = userService.getUserById(id);
+        // Owner cannot execute an action with a member that is not from his team !IMPORTANT
+        if (principal.getTeam().getId() != user.getTeam().getId()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -157,20 +179,10 @@ public class UserController {
     public String editMember(@PathVariable("id") int id, Model model, WebRequest request){
 
         User principal = userService.getUserByName(request.getUserPrincipal().getName());
-        // Owner cannot edit himself !IMPORTANT
-            if(principal.getId() == id){
-                return "errors/403";
-            }
-        // ------------------------
-        User user = userService.getUserById(id);
-        // Owner cannot edit member that is not from his team !IMPORTANT
-            if(principal.getTeam().getId() != user.getTeam().getId()){
-                return "errors/403";
-            }
-        // ------------------------
+        if(notAuthorized(principal, id)){return "errors/403";}
 
         List<Team> teams = teamService.listTeams();
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("teams", teams);
         return "add-edit-user";
     }
@@ -239,8 +251,10 @@ public class UserController {
      * @return success or error message in the add/edit page
      */
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
-    public String saveEditedMember(Model model, WebRequest request){
-        User user = this.userService.getUserById(Integer.parseInt(request.getParameter("id")));
+    public String saveEditedMember(Model model, WebRequest request) {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        User user = this.userService.getUserById(id);
         Team team = this.teamService.getTeamById(Integer.parseInt(request.getParameter("team")));
         String username = request.getParameter("username");
 
@@ -249,15 +263,23 @@ public class UserController {
         model.addAttribute("teams", teams);
 
 
-        if(username.isEmpty()){
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+
+
+        if(notAuthorized(principal, id)){return "errors/403";}
+
+        if (username.isEmpty()) {
             model.addAttribute("error", "Username can't be empty!");
             return "add-edit-user";
         }
         //Validate username
-        if(userAlreadyExists(username)){
-            model.addAttribute("error", "Not possible to edit member! Username already exists.");
-            return "add-edit-user";
+        if (!new String(user.getUsername()).equals(username)){
+            if (userAlreadyExists(username)) {
+                model.addAttribute("error", "Not possible to edit member! Username already exists.");
+                return "add-edit-user";
+            }
         }
+
         user.setUsername(username);
         user.setTeam(team);
         try
