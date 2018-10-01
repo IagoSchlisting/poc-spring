@@ -45,7 +45,7 @@
                                 <div class="alert alert-info">${msg}</div>
                             </c:if>
 
-                            <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: block;">
+                            <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: ${stay ? 'none' : 'block'}">
 
                                 <div class="form-group">
                                     <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
@@ -63,7 +63,7 @@
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             </form:form>
 
-                            <form:form id="register-form" action="/register" name="user" method="post" style="display: none;">
+                            <form:form id="register-form" action="/register" name="user" method="post" style="display: ${stay ? 'block' : 'none'}">
                                 <div class="form-group">
                                     <input type="text" name="new_username" id="new_username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>
@@ -92,6 +92,5 @@
 </div>
 </body>
 <script src="resources/js/login.js"></script>
-<script> <c:if test="${not empty stay}"> window.error = true; </c:if>
-</script>
+<%--<script> <c:if test="${not empty stay}"> window.error = true; </c:if> </script>--%>
 </html>
