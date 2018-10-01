@@ -1,5 +1,6 @@
 package com.sap.models;
 
+import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
@@ -34,6 +35,10 @@ public class User {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TEAM_ID")
     private Team team;
+
+    @OneToMany(mappedBy = "user")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    private List<MemberPeriodDay> days;
 
     public Team getTeam() {
         return team;
@@ -83,5 +88,11 @@ public class User {
         this.enabled = enabled;
     }
 
+    public List<MemberPeriodDay> getDays() {
+        return days;
+    }
 
+    public void setDays(List<MemberPeriodDay> days) {
+        this.days = days;
+    }
 }

@@ -23,6 +23,10 @@ public class Team {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<User> users;
 
+    @OneToMany(mappedBy = "team")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    private List<Period> periods;
+
     public Integer getId() {
         return id;
     }
