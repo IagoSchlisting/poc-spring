@@ -30,6 +30,12 @@
             <a class="navbar-brand" href="/"> Poc System </a>
         </div>
 
+        <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li><a href="/calendar"> Work Calendar </a></li>
+        </ul>
+
+
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">

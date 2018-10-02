@@ -3,6 +3,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"> Change your password here. </div>
         <div class="panel-body">
+
             <c:if test="${not empty error}">
                 <div class="alert alert-danger">${error}</div>
             </c:if>

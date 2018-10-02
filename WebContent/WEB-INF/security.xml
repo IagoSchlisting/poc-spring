@@ -7,7 +7,11 @@
     <http auto-config="true">
         <access-denied-handler error-page="/403" />
         <intercept-url pattern="/" access="hasRole('ROLE_USER')" />
+
         <intercept-url pattern="/user/**" access="hasRole('ROLE_OWNER')" />
+        <intercept-url pattern="/calendar/**" access="hasRole('ROLE_OWNER')" />
+        <intercept-url pattern="/period/**" access="hasRole('ROLE_OWNER')" />
+
         <intercept-url pattern="/login" access="permitAll" />
         <intercept-url pattern="/resources/**" access="permitAll" />
 

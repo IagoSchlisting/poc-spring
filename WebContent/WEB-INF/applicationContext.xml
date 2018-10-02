@@ -27,4 +27,10 @@
         <property name="sessionFactory" ref="sessionFactory"/>
     </bean>
 
+    <bean name="PeriodService" class="com.sap.service.impl.PeriodServiceImp">
+    </bean>
+    <bean name="PeriodDao" class="com.sap.dao.impl.PeriodDaoImp">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
 </beans>
