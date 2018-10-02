@@ -36,9 +36,17 @@ public class User {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(
+//            name = "MEMBER_DAY",
+//            joinColumns = { @JoinColumn(name = "USER_ID") },
+//            inverseJoinColumns = { @JoinColumn(name = "DAY_ID") }
+//    )
+//    private List<DayPeriod> days;
+
     @OneToMany(mappedBy = "user")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    private List<MemberPeriodDay> days;
+    private List<User_Day> userDays;
 
     public Team getTeam() {
         return team;
@@ -88,11 +96,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public List<MemberPeriodDay> getDays() {
-        return days;
+    public List<User_Day> getUserDays() {
+        return userDays;
     }
 
-    public void setDays(List<MemberPeriodDay> days) {
-        this.days = days;
+    public void setUserDays(List<User_Day> userDays) {
+        this.userDays = userDays;
     }
 }

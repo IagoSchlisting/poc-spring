@@ -16,8 +16,8 @@ public class PeriodServiceImp  implements PeriodService {
     public void addPeriod(Period period){ this.periodDao.addPeriod(period); }
 
     @Override
-    public List<Period> listPeriods() {
-        return this.periodDao.listPeriods();
+    public List<Period> listPeriods(int team_id) {
+        return this.periodDao.listPeriods(team_id);
     }
 
     @Override

@@ -1,17 +1,13 @@
 package com.sap.models;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.stereotype.Repository;
 
-import javax.enterprise.inject.Default;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.EnumMap;
 
 @Entity
 @Table(name = "MEMBER_DAY")
 @Repository
-public class MemberPeriodDay {
+public class User_Day {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +20,7 @@ public class MemberPeriodDay {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "DAY_ID")
-    private DayPeriod day;
+    private Day day;
 
     @Enumerated(EnumType.ORDINAL)
     private Shift shift;
@@ -48,11 +44,11 @@ public class MemberPeriodDay {
         this.user = user;
     }
 
-    public DayPeriod getDay() {
+    public Day getDay() {
         return day;
     }
 
-    public void setDay(DayPeriod day) {
+    public void setDay(Day day) {
         this.day = day;
     }
 

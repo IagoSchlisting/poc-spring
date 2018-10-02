@@ -14,8 +14,8 @@ public class PeriodDaoImp extends HibernateDaoSupport implements PeriodDao {
     public void addPeriod(Period period){ getHibernateTemplate().save(period); }
 
     @Override
-    public List<Period> listPeriods(){
-        return (List<Period>) getHibernateTemplate().find("from com.sap.models.Period");
+    public List<Period> listPeriods(int team_id){
+        return (List<Period>) getHibernateTemplate().find("from com.sap.models.Period where TEAM_ID = " + team_id);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.sap.controllers;
 
+import com.sap.models.Day;
 import com.sap.models.Period;
 import com.sap.models.User;
+import com.sap.service.DayService;
 import com.sap.service.PeriodService;
 import com.sap.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -13,7 +15,6 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -24,22 +25,35 @@ public class CalendarController {
     private PeriodService periodService;
     @Resource
     private UserService userService;
+    @Resource
+    private DayService dayService;
 
     @RequestMapping(value = "/calendar", method = RequestMethod.GET)
-    public String goToCalendarPage(Model model){
-        model.addAttribute("periods", periodService.listPeriods());
+    public String goToCalendarPage(Model model, WebRequest request){
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         return "calendar-admin";
     }
 
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
-    public String manageCalendarPage(@PathVariable("id") int id){
+    public String manageCalendarPage(@PathVariable("id") int id, Model model){
+        model.addAttribute("days", dayService.listDays(id));
         return "period-days";
+    }
+    @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
+    public String getDayInfo(@PathVariable("id") int id, Model model){
+        model.addAttribute("day", dayService.getDayById(id));
+        return "day-manager";
     }
 
     @RequestMapping(value = "/period/add", method = RequestMethod.POST)
     public String addNewPeriod(WebRequest request, Model model){
 
-        List<Period> periods = periodService.listPeriods();
+        // Get principal user
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        int team_id = principal.getTeam().getId();
+
+        List<Period> periods = periodService.listPeriods(team_id);
         // Try to format data
         LocalDate start = LocalDate.parse(request.getParameter("start-date"));
         LocalDate end = LocalDate.parse(request.getParameter("end-date"));
@@ -50,21 +64,11 @@ public class CalendarController {
             return "calendar-admin";
         }
         //Checking if period data is already been used.
-        for(Period period : periods){
-            if (start.isEqual(period.getStart())
-            || start.isEqual(period.getEnd())
-            || end.isEqual(period.getEnd())
-            || end.isEqual(period.getStart())
-            || (start.isAfter(period.getStart()) && end.isBefore(period.getEnd()))
-            || (start.isAfter(period.getStart()) && start.isBefore(period.getEnd()))
-            ){
-                model.addAttribute("error", "Not possible to create the period, some days between the chosen interval has already been used!");
-                model.addAttribute("periods", periods);
-                return "calendar-admin";
-            }
+        if(!validatePeriods(periods, start, end)){
+            model.addAttribute("error", "Not possible to create the period, some days between the chosen interval has already been used!");
+            model.addAttribute("periods", periods);
+            return "calendar-admin";
         }
-        // Get principal user
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
         try{
             Period period = new Period();
             period.setStart(start);
@@ -72,7 +76,9 @@ public class CalendarController {
             period.setTeam(principal.getTeam());
             periodService.addPeriod(period);
 
-            model.addAttribute("periods", periodService.listPeriods());
+            createDaysFromPeriod(period);
+
+            model.addAttribute("periods", periodService.listPeriods(team_id));
             model.addAttribute("msg", "Period added successfully!");
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
@@ -81,11 +87,43 @@ public class CalendarController {
         return "calendar-admin";
     }
 
+    public void createDaysFromPeriod(Period period){
+        LocalDate counter = period.getStart();
+        LocalDate end = period.getEnd().plusDays(1);
+        Day day;
+        do{
+            day = new Day();
+            day.setPeriod(period);
+            day.setDay(counter);
+            day.setSpecial(false);
+            dayService.addDay(day);
+            counter = counter.plusDays(1);
+        }while(!counter.isEqual(end));
+    }
+
+
+
+    public Boolean validatePeriods(List<Period> periods, LocalDate start, LocalDate end){
+        for(Period period : periods){
+            if (start.isEqual(period.getStart())
+                    || start.isEqual(period.getEnd())
+                    || end.isEqual(period.getEnd())
+                    || end.isEqual(period.getStart())
+                    || (start.isAfter(period.getStart()) && start.isBefore(period.getEnd()))
+                    || (start.isBefore(period.getStart()) && end.isAfter(period.getStart()))
+            ){
+                return false;
+            }
+        }
+        return true;
+    }
 
     @RequestMapping("/calendar/delete/{id}")
-    public String removePeriod(@PathVariable("id") int id, Model model){
+    public String removePeriod(@PathVariable("id") int id, Model model, WebRequest request){
+        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+
         periodService.removePeriod(id);
-        model.addAttribute("periods", periodService.listPeriods());
+        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         model.addAttribute("msg", "Period removed successfully!");
         return "calendar-admin";
     }

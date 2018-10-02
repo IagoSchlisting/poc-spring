@@ -5,8 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -28,7 +26,7 @@ public class Period {
 
     @OneToMany(mappedBy = "period")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    private List<DayPeriod> days;
+    private List<Day> days;
 
 
     public Integer getId() {
@@ -47,11 +45,11 @@ public class Period {
         this.team = team;
     }
 
-    public List<DayPeriod> getDays() {
+    public List<Day> getDays() {
         return days;
     }
 
-    public void setDays(List<DayPeriod> days) {
+    public void setDays(List<Day> days) {
         this.days = days;
     }
 
