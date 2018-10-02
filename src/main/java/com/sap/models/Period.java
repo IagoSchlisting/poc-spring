@@ -4,6 +4,7 @@ import org.hibernate.annotations.Cascade;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -18,8 +19,8 @@ public class Period {
     @Column(name = "PERIOD_ID")
     private Integer id;
 
-    private String start;
-    private String End;
+    private LocalDate start;
+    private LocalDate End;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "TEAM_ID")
@@ -46,28 +47,27 @@ public class Period {
         this.team = team;
     }
 
-
-    public String getStart() {
-        return start;
-    }
-
-    public void setStart(String start) {
-        this.start = start;
-    }
-
-    public String getEnd() {
-        return End;
-    }
-
-    public void setEnd(String end) {
-        End = end;
-    }
-
     public List<DayPeriod> getDays() {
         return days;
     }
 
     public void setDays(List<DayPeriod> days) {
         this.days = days;
+    }
+
+    public LocalDate getStart() {
+        return start;
+    }
+
+    public void setStart(LocalDate start) {
+        this.start = start;
+    }
+
+    public LocalDate getEnd() {
+        return End;
+    }
+
+    public void setEnd(LocalDate end) {
+        End = end;
     }
 }
