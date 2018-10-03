@@ -19,7 +19,7 @@
                                         <p style="color: green">Normal</p>
                                     </c:when>
                                     <c:otherwise>
-                                        <p style="color: grey">Weekend or Holiday</p>
+                                        <p style="color: red">Special</p>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

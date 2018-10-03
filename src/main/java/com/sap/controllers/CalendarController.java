@@ -1,10 +1,9 @@
 package com.sap.controllers;
 
-import com.sap.models.Day;
-import com.sap.models.Period;
-import com.sap.models.User;
+import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
+import com.sap.service.UserDayService;
 import com.sap.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,22 +26,29 @@ public class CalendarController {
     private UserService userService;
     @Resource
     private DayService dayService;
+    @Resource
+    private UserDayService userDayService;
+
+    @Resource
+    private User principal;
 
     @RequestMapping(value = "/calendar", method = RequestMethod.GET)
-    public String goToCalendarPage(Model model, WebRequest request){
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+    public String CalendarPage(Model model, WebRequest request){
+        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        this.principal = userService.getUserByName(request.getUserPrincipal().getName());
         model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         return "calendar-admin";
     }
 
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
-    public String manageCalendarPage(@PathVariable("id") int id, Model model){
+    public String PeriodPage(@PathVariable("id") int id, Model model){
         model.addAttribute("days", dayService.listDays(id));
         return "period-days";
     }
     @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
-    public String getDayInfo(@PathVariable("id") int id, Model model){
+    public String DayPage(@PathVariable("id") int id, Model model){
         model.addAttribute("day", dayService.getDayById(id));
+        model.addAttribute("userDays", userDayService.listUserDays(id));
         return "day-manager";
     }
 
@@ -50,8 +56,8 @@ public class CalendarController {
     public String addNewPeriod(WebRequest request, Model model){
 
         // Get principal user
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
-        int team_id = principal.getTeam().getId();
+        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        int team_id = this.principal.getTeam().getId();
 
         List<Period> periods = periodService.listPeriods(team_id);
         // Try to format data
@@ -97,10 +103,25 @@ public class CalendarController {
             day.setDay(counter);
             day.setSpecial(false);
             dayService.addDay(day);
+
+            boundUsersToTheDate(day);
+
             counter = counter.plusDays(1);
         }while(!counter.isEqual(end));
     }
 
+    public void boundUsersToTheDate(Day day){
+        List<User> users = this.userService.listUsers(this.principal.getTeam().getId(), this.principal.getId());
+        UserDay userDay;
+        for(User user : users){
+            userDay = new UserDay();
+            userDay.setDay(day);
+            userDay.setUser(user);
+            userDay.setDisponibility(true);
+            userDay.setShift(Shift.ANY);
+            userDayService.addUserDay(userDay);
+        }
+    }
 
 
     public Boolean validatePeriods(List<Period> periods, LocalDate start, LocalDate end){
@@ -120,10 +141,9 @@ public class CalendarController {
 
     @RequestMapping("/calendar/delete/{id}")
     public String removePeriod(@PathVariable("id") int id, Model model, WebRequest request){
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
-
+        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
         periodService.removePeriod(id);
-        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
+        model.addAttribute("periods", periodService.listPeriods(this.principal.getTeam().getId()));
         model.addAttribute("msg", "Period removed successfully!");
         return "calendar-admin";
     }

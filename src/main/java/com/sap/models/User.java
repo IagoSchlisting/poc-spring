@@ -46,7 +46,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    private List<User_Day> userDays;
+    private List<UserDay> userDays;
 
     public Team getTeam() {
         return team;
@@ -96,11 +96,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public List<User_Day> getUserDays() {
+    public List<UserDay> getUserDays() {
         return userDays;
     }
 
-    public void setUserDays(List<User_Day> userDays) {
+    public void setUserDays(List<UserDay> userDays) {
         this.userDays = userDays;
     }
 }

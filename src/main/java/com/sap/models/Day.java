@@ -28,7 +28,7 @@ public class Day {
 
     @OneToMany(mappedBy = "day")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
-    private List<User_Day> memberdays;
+    private List<UserDay> memberdays;
 
     public Integer getId() {
         return id;
@@ -62,11 +62,11 @@ public class Day {
         this.special = special;
     }
 
-    public List<User_Day> getMemberdays() {
+    public List<UserDay> getMemberdays() {
         return memberdays;
     }
 
-    public void setMemberdays(List<User_Day> memberdays) {
+    public void setMemberdays(List<UserDay> memberdays) {
         this.memberdays = memberdays;
     }
 }
