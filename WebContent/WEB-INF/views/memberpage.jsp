@@ -5,7 +5,7 @@
             <div class="col-md-6"> Calendar Manager </div>
             <div class="col-md-6" align="right"> You are from <strong>${team.name}</strong> </div>
         </div>
-        <div class="panel-body" style="min-height: 350px">
+        <div class="panel-body">
 
             <c:if test="${not empty error}">
                 <div class="alert alert-danger">${error}</div>

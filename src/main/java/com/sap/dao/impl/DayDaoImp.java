@@ -5,7 +5,6 @@ import com.sap.models.Day;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 public class DayDaoImp extends HibernateDaoSupport implements DayDao {

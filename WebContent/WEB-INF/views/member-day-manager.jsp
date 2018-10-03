@@ -16,13 +16,15 @@
         <form action="/userDay/update" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input type="hidden" name="id" id="id" value="${userDay.id}"/>
-            <div class="form-group">
-                <label for="disponibility"> Disponibility </label>
-                <select class="form-control" id="disponibility" name="disponibility">
-                    <option value="1">Available</option>
-                    <option value="0" ${not userDay.disponibility ? 'selected' : ''}>Not Available</option>
-                </select>
-            </div>
+            <c:if test="${userDay.day.special}">
+                <div class="form-group">
+                    <label for="disponibility"> Disponibility </label>
+                    <select class="form-control" id="disponibility" name="disponibility">
+                        <option value="1">Available</option>
+                        <option value="0" ${not userDay.disponibility ? 'selected' : ''}>Not Available</option>
+                    </select>
+                </div>
+            </c:if>
             <div class="form-group">
                 <label for="shift"> Shift </label>
                 <select class="form-control" id="shift" name="shift">

@@ -24,9 +24,9 @@
                 <c:forEach var="userDay" items="${userDays}">
             <tr>
                 <td> ${userDay.user.username} </td>
-                <td> ${userDay.shift}</td>
+            <td> <span class="status ${userDay.shift}">${userDay.shift}</span></td>
                 <td>
-                    <span class="disponibility ${userDay.disponibility}">
+                    <span class="status ${userDay.disponibility}">
                             ${userDay.disponibility ? 'Available' : 'Not Available'}
                     </span>
                 </td>

@@ -23,19 +23,17 @@
     font-size: medium;
 }
 
-.disponibility{
+.status{
     padding: 4px 18px 4px 18px;
     border-radius: 2px;
     color: white;
     font-size: medium;
 }
-
-.true{
-    background-color: green;
-}
-.false{
-    background-color: red;
-}
+.true{ background-color: green}
+.false{ background-color: red }
+.LATE{background-color: #262626}
+.DAY{background-color: gold}
+.ANY{background-color: #888888}
 
 .form-check-label{
     font-weight: normal;

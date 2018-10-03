@@ -85,12 +85,16 @@ public class CalendarController {
             userDay.setShift(Shift.ANY);
         }
 
-        userDay.setDisponibility(request.getParameter("disponibility").equals("1") ? true : false);
+        if(request.getParameterMap().containsKey("disponibility")){
+            userDay.setDisponibility(request.getParameter("disponibility").equals("1") ? true : false);
+        }
+
         model.addAttribute("member", true);
 
         try{
             userDayService.updateUserDay(userDay);
             model.addAttribute("userDay", userDayService.getUserDayById(id));
+            model.addAttribute("day", userDay.getDay());
             model.addAttribute("msg", "Changes Saved!");
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
