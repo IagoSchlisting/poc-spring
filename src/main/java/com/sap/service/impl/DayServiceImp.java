@@ -23,5 +23,10 @@ public class DayServiceImp  implements DayService {
     @Override
     public Day getDayById(int id){ return this.dayDao.getDayById(id);}
 
+    @Override
+    public void updateDay(Day day){
+        this.dayDao.updateDay(day);
+    }
+
 
 }

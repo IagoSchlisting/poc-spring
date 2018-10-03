@@ -52,6 +52,25 @@ public class CalendarController {
         return "day-manager";
     }
 
+    @RequestMapping(value = "/day/update", method = RequestMethod.POST)
+    public String updateDay(WebRequest request, Model model){
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        try{
+            Day day = dayService.getDayById(id);
+            day.setSpecial(request.getParameter("special").equals("1") ? true : false);
+            dayService.updateDay(day);
+            model.addAttribute("msg", "Changed!");
+        }catch(Exception e){
+            model.addAttribute("error", e.getMessage());
+
+        }
+
+        model.addAttribute("day", dayService.getDayById(id));
+        model.addAttribute("userDays", userDayService.listUserDays(id));
+        return "day-manager";
+    }
+
     @RequestMapping(value = "/period/add", method = RequestMethod.POST)
     public String addNewPeriod(WebRequest request, Model model){
 

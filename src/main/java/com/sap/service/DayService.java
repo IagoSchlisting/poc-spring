@@ -8,4 +8,5 @@ public interface DayService {
     public void addDay(Day day);
     public List<Day> listDays(int period_id);
     public Day getDayById(int id);
+    public void updateDay(Day day);
 }

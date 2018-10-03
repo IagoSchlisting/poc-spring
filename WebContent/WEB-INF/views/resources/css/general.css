@@ -14,3 +14,34 @@
     bottom: 0;
     text-align: center;
 }
+.date{
+    padding: 2px 20px 4px 20px;
+    /*border: 1px solid black;*/
+    border-radius: 2px;
+    background-color: #b0b0b0;
+    color: white;
+    font-size: medium;
+}
+
+.disponibility{
+    padding: 4px 18px 4px 18px;
+    border-radius: 2px;
+    color: white;
+    font-size: medium;
+}
+
+.true{
+    background-color: green;
+}
+.false{
+    background-color: red;
+}
+
+.form-check-label{
+    font-weight: normal;
+}
+
+.back{
+    padding: 5px 50px 5px 50px;
+    margin-top: 20px;
+}

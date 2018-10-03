@@ -19,10 +19,17 @@ public class DayDaoImp extends HibernateDaoSupport implements DayDao {
     @Override
     public List<Day> listDays(int period_id)
     {
-        return (List<Day>) getHibernateTemplate().find("from com.sap.models.Day where PERIOD_ID = " + period_id);
+        return (List<Day>) getHibernateTemplate().find("from com.sap.models.Day where PERIOD_ID = " + period_id + "order by day asc");
     }
     @Override
     public Day getDayById(int id){ return getHibernateTemplate().get(Day.class, id);}
+
+    @Override
+    @Transactional
+    public void updateDay(Day day){
+        this.getHibernateTemplate().update(day);
+    }
+
 
 
 }

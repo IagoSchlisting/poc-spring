@@ -20,4 +20,12 @@ public class UserDayServiceImp implements UserDayService {
     public List<UserDay> listUserDays(int day_id){
         return this.userDayDao.listUserDays(day_id);
     }
+    @Override
+    public void updateUserDay(UserDay userDay){
+        this.userDayDao.updateUserDay(userDay);
+    }
+    @Override
+    public UserDay getUserDayById(int id){
+        return this.userDayDao.getUserDayById(id);
+    }
 }

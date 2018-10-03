@@ -18,4 +18,13 @@ public class UserDayDaoImp extends HibernateDaoSupport implements UserDayDao {
     public List<UserDay> listUserDays(int day_id){
         return (List<UserDay>) this.getHibernateTemplate().find("from com.sap.models.UserDay where DAY_ID = " + day_id);
     }
+    @Override
+    @Transactional
+    public void updateUserDay(UserDay userDay){
+        this.getHibernateTemplate().update(userDay);
+    }
+    @Override
+    public UserDay getUserDayById(int id){
+        return this.getHibernateTemplate().get(UserDay.class, id);
+    }
 }
