@@ -35,7 +35,9 @@
 
         <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
-            <li><a href="/calendar"> Work Calendar </a></li>
+            <c:if test="${not member}">
+                <li><a href="/calendar/admin"> Work Calendar </a></li>
+            </c:if>
         </ul>
 
 

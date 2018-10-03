@@ -37,7 +37,7 @@
                     <a href="/calendar/manage/${day.period.id}" class="btn btn-danger back"> Back </a>
                 </td>
                 <td colspan="2">
-                    <form action="/day/update" method="post">
+                    <form action="/day/admin/update" method="post">
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                         <input type="hidden" id="id" name="id" value="${day.id}">
                         <div class="form-group">

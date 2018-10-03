@@ -32,7 +32,7 @@ public class CalendarController {
     @Resource
     private User principal;
 
-    @RequestMapping(value = "/calendar", method = RequestMethod.GET)
+    @RequestMapping(value = "/calendar/admin", method = RequestMethod.GET)
     public String CalendarPage(Model model, WebRequest request){
         //User principal = userService.getUserByName(request.getUserPrincipal().getName());
         this.principal = userService.getUserByName(request.getUserPrincipal().getName());
@@ -41,18 +41,64 @@ public class CalendarController {
     }
 
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
-    public String PeriodPage(@PathVariable("id") int id, Model model){
+    public String PeriodPage(@PathVariable("id") int id, Model model, WebRequest request){
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
+        if(user.getRoles().get(1).getRole().equals("ROLE_MEMBER")){
+            model.addAttribute("member", true);
+        }
         model.addAttribute("days", dayService.listDays(id));
         return "period-days";
     }
     @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
-    public String DayPage(@PathVariable("id") int id, Model model){
+    public String DayPage(@PathVariable("id") int id, Model model, WebRequest request){
+
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
         model.addAttribute("day", dayService.getDayById(id));
-        model.addAttribute("userDays", userDayService.listUserDays(id));
-        return "day-manager";
+
+        for(Role role: user.getRoles()){
+            if(new String(role.getRole()).equals("ROLE_OWNER")){
+                model.addAttribute("userDays", userDayService.listUserDays(id));
+                return "owner-day-manager";
+            }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
+                model.addAttribute("member", true);
+                model.addAttribute("userDay", userDayService.findUserDay(user.getId(), id));
+                return "member-day-manager";
+            }
+        }
+        return "login";
     }
 
-    @RequestMapping(value = "/day/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
+    public String updateUserDay(Model model, WebRequest request){
+        User user = userService.getUserByName(request.getUserPrincipal().getName());
+
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        UserDay userDay = userDayService.getUserDayById(id);
+        String shift = request.getParameter("shift");
+
+        if(shift.equals("day")){
+            userDay.setShift(Shift.DAY);
+        }else if (shift.equals("late")){
+            userDay.setShift(Shift.LATE);
+        }else {
+            userDay.setShift(Shift.ANY);
+        }
+
+        userDay.setDisponibility(request.getParameter("disponibility").equals("1") ? true : false);
+        model.addAttribute("member", true);
+
+        try{
+            userDayService.updateUserDay(userDay);
+            model.addAttribute("userDay", userDayService.getUserDayById(id));
+            model.addAttribute("msg", "Changes Saved!");
+        }catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+        }
+        return "member-day-manager";
+    }
+
+    @RequestMapping(value = "/day/admin/update", method = RequestMethod.POST)
     public String updateDay(WebRequest request, Model model){
         int id = Integer.parseInt(request.getParameter("id"));
 
@@ -68,7 +114,7 @@ public class CalendarController {
 
         model.addAttribute("day", dayService.getDayById(id));
         model.addAttribute("userDays", userDayService.listUserDays(id));
-        return "day-manager";
+        return "owner-day-manager";
     }
 
     @RequestMapping(value = "/period/add", method = RequestMethod.POST)

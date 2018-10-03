@@ -1,5 +1,6 @@
 package com.sap.controllers;
 
+import com.sap.service.PeriodService;
 import com.sap.service.UserService;
 import com.sap.models.Role;
 import com.sap.models.User;
@@ -17,6 +18,10 @@ public class HomeController {
 
     @Resource
     private UserService userService;
+    @Resource
+    private PeriodService periodService;
+    @Resource
+    private User principal;
 
 
     /**
@@ -40,7 +45,9 @@ public class HomeController {
                 model.addAttribute("members", this.userService.listUsers(user.getTeam().getId(), user.getId()));
                 return "ownerpage";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
-                // Waiting for more code here
+                model.addAttribute("member", true);
+                this.principal = userService.getUserByName(request.getUserPrincipal().getName());
+                model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
                 return "memberpage";
             }
         }

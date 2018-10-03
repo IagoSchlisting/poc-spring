@@ -28,4 +28,8 @@ public class UserDayServiceImp implements UserDayService {
     public UserDay getUserDayById(int id){
         return this.userDayDao.getUserDayById(id);
     }
+    @Override
+    public UserDay findUserDay(int user_id, int day_id){
+        return this.userDayDao.findUserDay(user_id, day_id);
+    }
 }
