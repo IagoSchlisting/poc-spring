@@ -4,7 +4,6 @@ import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
 import com.sap.service.UserDayService;
-import com.sap.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,12 +27,26 @@ public class CalendarController extends BaseController{
     private UserDayService userDayService;
 
 
+    /**
+     * Renderize the calendar-admin page
+     * @param model
+     * @param request
+     * @return calendar page
+     */
     @RequestMapping(value = "/calendar/admin", method = RequestMethod.GET)
     public String CalendarPage(Model model, WebRequest request){
         User principal = this.getPrincipalUser();
         model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         return "calendar-admin";
     }
+
+    /**
+     * Renderize the period page
+     * @param id
+     * @param model
+     * @param request
+     * @return period page
+     */
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
     public String PeriodPage(@PathVariable("id") int id, Model model, WebRequest request){
         User principal = this.getPrincipalUser();
@@ -43,6 +56,14 @@ public class CalendarController extends BaseController{
         model.addAttribute("days", dayService.listDays(id));
         return "period-days";
     }
+
+    /**
+     * Renderize day page
+     * @param id
+     * @param model
+     * @param request
+     * @return day page
+     */
     @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
     public String DayPage(@PathVariable("id") int id, Model model, WebRequest request){
         User principal = this.getPrincipalUser();
@@ -61,8 +82,15 @@ public class CalendarController extends BaseController{
         return "login";
     }
 
+    /**
+     * Allows member user to update his disponibility and shift informations from specifc day
+     * @param model
+     * @param request
+     * @return member-day-manager page
+     */
     @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
     public String updateUserDay(Model model, WebRequest request){
+        model.addAttribute("member", true);
         int id = Integer.parseInt(request.getParameter("id"));
         UserDay userDay = userDayService.getUserDayById(id);
         String shift = request.getParameter("shift");
@@ -79,8 +107,6 @@ public class CalendarController extends BaseController{
             userDay.setDisponibility(request.getParameter("disponibility").equals("1") ? true : false);
         }
 
-        model.addAttribute("member", true);
-
         try{
             userDayService.updateUserDay(userDay);
             model.addAttribute("userDay", userDayService.getUserDayById(id));
@@ -92,6 +118,12 @@ public class CalendarController extends BaseController{
         return "member-day-manager";
     }
 
+    /**
+     * Allows owners to set day as weekend or holiday
+     * @param request
+     * @param model
+     * @return owner-day-manager page
+     */
     @RequestMapping(value = "/day/admin/update", method = RequestMethod.POST)
     public String updateDay(WebRequest request, Model model){
         int id = Integer.parseInt(request.getParameter("id"));
@@ -111,24 +143,27 @@ public class CalendarController extends BaseController{
         return "owner-day-manager";
     }
 
+    /**
+     * Allows owner to create a new period if the same respects the validations
+     * @param request
+     * @param model
+     * @return updated calendar-admin page
+     */
     @RequestMapping(value = "/period/add", method = RequestMethod.POST)
     public String addNewPeriod(WebRequest request, Model model){
 
-        // Get principal user
         User principal = this.getPrincipalUser();
         int team_id = principal.getTeam().getId();
 
         List<Period> periods = periodService.listPeriods(team_id);
-        // Try to format data
         LocalDate start = LocalDate.parse(request.getParameter("start-date"));
         LocalDate end = LocalDate.parse(request.getParameter("end-date"));
-        // Validating data values
+
         if(start.isBefore(LocalDate.now()) || start.isAfter(end)){
             model.addAttribute("error", "Not possible to create a period between this dates, check the corresponding values!");
             model.addAttribute("periods", periods);
             return "calendar-admin";
         }
-        //Checking if period data is already been used.
         if(!validatePeriods(periods, start, end)){
             model.addAttribute("error", "Not possible to create the period, some days between the chosen interval has already been used!");
             model.addAttribute("periods", periods);
@@ -140,9 +175,7 @@ public class CalendarController extends BaseController{
             period.setEnd(end);
             period.setTeam(principal.getTeam());
             periodService.addPeriod(period);
-
             createDaysFromPeriod(period);
-
             model.addAttribute("periods", periodService.listPeriods(team_id));
             model.addAttribute("msg", "Period added successfully!");
         }catch (Exception e){
@@ -152,6 +185,10 @@ public class CalendarController extends BaseController{
         return "calendar-admin";
     }
 
+    /**
+     * Create individual days to the last added period
+     * @param period
+     */
     public void createDaysFromPeriod(Period period){
         LocalDate counter = period.getStart();
         LocalDate end = period.getEnd().plusDays(1);
@@ -162,13 +199,15 @@ public class CalendarController extends BaseController{
             day.setDay(counter);
             day.setSpecial(false);
             dayService.addDay(day);
-
             boundUsersToTheDate(day);
-
             counter = counter.plusDays(1);
         }while(!counter.isEqual(end));
     }
 
+    /**
+     * Bound each of the owner's users to the day from the new created period
+     * @param day
+     */
     public void boundUsersToTheDate(Day day){
         List<User> users = this.userService.listUsers(this.getPrincipalUser().getTeam().getId(), this.getPrincipalUser().getId());
         UserDay userDay;
@@ -183,6 +222,13 @@ public class CalendarController extends BaseController{
     }
 
 
+    /**
+     * Validate if there are no conflicts between each of the period's days
+     * @param periods
+     * @param start
+     * @param end
+     * @return Boolean which symbolizes success or error
+     */
     public Boolean validatePeriods(List<Period> periods, LocalDate start, LocalDate end){
         for(Period period : periods){
             if (start.isEqual(period.getStart())
@@ -198,6 +244,13 @@ public class CalendarController extends BaseController{
         return true;
     }
 
+    /**
+     * Method responsible for deleting the period. It automatically deletes all days and bounded users from the database.
+     * @param id
+     * @param model
+     * @param request
+     * @return calendar-admin page
+     */
     @RequestMapping("/calendar/delete/{id}")
     public String removePeriod(@PathVariable("id") int id, Model model, WebRequest request){
         User principal = this.getPrincipalUser();

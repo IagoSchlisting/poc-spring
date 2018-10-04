@@ -62,6 +62,11 @@ public class HomeController extends BaseController {
         }
         return "login";
     }
+
+    /**
+     * Redirects to 403 page
+     * @return not authorized page
+     */
     @RequestMapping("/403")
     public String notAllowed(){
         return "errors/403";
