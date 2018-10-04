@@ -2,17 +2,15 @@ package com.sap.controllers;
 
 import com.sap.service.RoleService;
 import com.sap.service.TeamService;
-import com.sap.service.UserService;
 import com.sap.models.Role;
 import com.sap.models.Team;
 import com.sap.models.User;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -20,71 +18,51 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController{
 
-    @Resource
-    private UserService userService;
     @Resource
     private RoleService roleService;
     @Resource
     private TeamService teamService;
 
     /**
-     * Method responsible for registering a  new OWNER in the system. New member type users don't pass through this method.
+     * Method responsible for registering a new OWNER in the system. New member type users don't pass through this method.
      * @param model
      * @param request
      * @return / redirects to the login page with a success or error message
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    private String addOwner(Model model, WebRequest request){
-
-        // Getting data from form
+    private ModelAndView addOwner(Model model, WebRequest request){
+        model.addAttribute("stay", true);
         String username = request.getParameter("new_username");
         String pass = request.getParameter("new_password");
         String confirm_pass = request.getParameter("confirm_password");
 
-        // Checking username and password so they are not empty
-        if(username.isEmpty() || pass.isEmpty()){
-            model.addAttribute("error", "Username or password cannot be empty!");
-            model.addAttribute("stay", true);
-            return "login";
-        }
+        String error = "";
+        if(username.isEmpty() || pass.isEmpty()){ error = "Username or password cannot be empty!"; }
+        if(userAlreadyExists(username)){ error = "Not possible to register the user in the system! Username already exists."; }
+        if(!new String(pass).equals(confirm_pass)){ error = "Passwords doesn't match!"; }
 
-         //Validate username
-        if(userAlreadyExists(username)){
-            model.addAttribute("error", "Not possible to register the user in the system! Username already exists.");
-            model.addAttribute("stay", true);
-            return "login";
+        if(!error.isEmpty()){
+            model.addAttribute("error", error);
+            return new ModelAndView("/login");
         }
-        // Checking if passwords are equal and encrypting it
-        if(!new String(pass).equals(confirm_pass)){
-            model.addAttribute("error", "Passwords doesn't match!");
-            model.addAttribute("stay", true);
-            return "login";
-        }
-        String encryptedPassword = passwordEncoder().encode(pass);
-
-        //Creating new user
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(encryptedPassword);
-        user.setEnabled(true);
-
         try
         {
-            List<Role> roles = giveRoles(true); // If owner == true , then user receives owner access
-            Team team = createOwnersTeam(username); // Creates team based on owners username
-            user.setRoles(roles);
-            user.setTeam(team);
+            User user = new User();
+            user.setEnabled(true);
+            user.setUsername(username);
+            user.setPassword(passwordEncoder().encode(pass));
+            user.setRoles(giveRoles(true));
+            user.setTeam(createOwnersTeam(username));
             userService.addUser(user);
+            model.addAttribute("stay", false);
             model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
         }
         catch (Exception e){
-            // If not able to register, it will be spit a gross message in the screen.
-            model.addAttribute("stay", true);
             model.addAttribute("error", e.getMessage());
         }
-        return "login";
+        return new ModelAndView("/login");
     }
 
     /**
@@ -132,22 +110,17 @@ public class UserController {
     }
 
     /**
-     * Method responsible for deleting user
+     * Method responsible for deleting member
      * @param id
      * @param model
-     * @param request
      * @return owner's page
      */
     @RequestMapping("/user/delete/{id}")
-    public String removeMember(@PathVariable("id") int id, Model model, WebRequest request){
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
-
-        if(notAuthorized(principal, id)){return "errors/403";}
-
+    public RedirectView removeMember(@PathVariable("id") int id, Model model){
+        User principal = this.getPrincipalUser();
+        if(notAuthorized(principal, id)){ return new RedirectView("/403");  }
         userService.removeUser(id);
-        model.addAttribute("team", principal.getTeam());
-        model.addAttribute("members", userService.listUsers(principal.getTeam().getId(), principal.getId()));
-        return "ownerpage";
+        return new RedirectView("/");
     }
 
     /**
@@ -176,11 +149,9 @@ public class UserController {
      * @return edit page
      */
     @RequestMapping("/user/edit/{id}")
-    public String editMember(@PathVariable("id") int id, Model model, WebRequest request){
-
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
+    public String editMember(@PathVariable("id") int id, Model model){
+        User principal = this.getPrincipalUser();
         if(notAuthorized(principal, id)){return "errors/403";}
-
         List<Team> teams = teamService.listTeams();
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("teams", teams);
@@ -204,45 +175,32 @@ public class UserController {
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
     public String addMember(Model model, WebRequest request){
-
         String username = request.getParameter("username");
-        // Checking if username is not empty
+
         if(username.isEmpty()){
             model.addAttribute("error", "Username can't be empty!");
             return "add-edit-user";
         }
-        //Validate username
         if(userAlreadyExists(username)){
             model.addAttribute("error", "Not possible to add the member! Username already exists.");
             return "add-edit-user";
         }
 
-        String encryptedPassword = passwordEncoder().encode("password");
-        // Get team from the principal user, who is registering the new member
-        Team team = userService.getUserByName(request.getUserPrincipal().getName()).getTeam();
-        // Get roles allowed to the member user type
-        List<Role> roles = giveRoles(false); // Gives only member access to the user
-
-        // Creating new user
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(encryptedPassword);
-        user.setEnabled(true);
-        user.setRoles(roles);
-        user.setTeam(team);
-
-        try
-        {
+        try {
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(passwordEncoder().encode("password"));
+            user.setEnabled(true);
+            user.setRoles(giveRoles(false));
+            user.setTeam(this.getPrincipalUser().getTeam());
             userService.addUser(user);
             model.addAttribute("msg", "New member registered successfully!");
         }
         catch (Exception e){
-            // If not able to add new member, it will be spit a gross message in the screen.
             model.addAttribute("error", e.getMessage());
         }
         return "add-edit-user";
     }
-
 
     /**
      * Responsible for edit member type users
@@ -252,19 +210,18 @@ public class UserController {
      */
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
     public String saveEditedMember(Model model, WebRequest request) {
-        int id = Integer.parseInt(request.getParameter("id"));
 
-        User user = this.userService.getUserById(id);
-        Team team = this.teamService.getTeamById(Integer.parseInt(request.getParameter("team")));
+        int id = Integer.parseInt(request.getParameter("id"));
+        int team_id = Integer.parseInt(request.getParameter("team"));
         String username = request.getParameter("username");
 
-        List<Team> teams = teamService.listTeams();
+        User user = this.userService.getUserById(id);
+        Team team = this.teamService.getTeamById(team_id);
+
         model.addAttribute("user", user);
-        model.addAttribute("teams", teams);
+        model.addAttribute("teams", teamService.listTeams());
 
-
-        User principal = userService.getUserByName(request.getUserPrincipal().getName());
-
+        User principal = this.getPrincipalUser();
 
         if(notAuthorized(principal, id)){return "errors/403";}
 
@@ -272,25 +229,20 @@ public class UserController {
             model.addAttribute("error", "Username can't be empty!");
             return "add-edit-user";
         }
-        //Validate username
         if (!new String(user.getUsername()).equals(username)){
             if (userAlreadyExists(username)) {
                 model.addAttribute("error", "Not possible to edit member! Username already exists.");
                 return "add-edit-user";
             }
         }
-
-        user.setUsername(username);
-        user.setTeam(team);
         try
         {
+            user.setUsername(username);
+            user.setTeam(team);
             userService.updateUser(user);
             model.addAttribute("msg", "Member edited successfully!");
         }
-        catch (Exception e){
-            // If not able to edit member, it will be spit a gross message in the screen.
-            model.addAttribute("error", e.getMessage());
-        }
+        catch (Exception e){ model.addAttribute("error", e.getMessage()); }
         return "add-edit-user";
     }
 
@@ -316,15 +268,13 @@ public class UserController {
         String newpass = request.getParameter("new_password");
         String confirmpass = request.getParameter("confirm_password");
 
-        // Checking fields so they are not empty
         if(oldpass.isEmpty() || newpass.isEmpty() || confirmpass.isEmpty()){
             model.addAttribute("error", "Fields can't be empty!");
             return "changepass";
         }
 
-        // Getting current user from Session
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
-        String userpass = user.getPassword();
+        User principal = this.getPrincipalUser();
+        String userpass = principal.getPassword();
 
         if(!passwordEncoder().matches(oldpass, userpass)){
             model.addAttribute("error", "Current pass doesn't match!");
@@ -336,25 +286,14 @@ public class UserController {
             return "changepass";
         }
 
-        String encryptedPassword = passwordEncoder().encode(newpass);
-
         try{
-            user.setPassword(encryptedPassword);
-            userService.updateUser(user);
+            principal.setPassword(passwordEncoder().encode(newpass));
+            userService.updateUser(principal);
             model.addAttribute("msg", "Password changed successfully!");
         }
         catch (Exception e){
             model.addAttribute("error", e.getMessage());
         }
         return "changepass";
-    }
-
-    /**
-     * Encrypts the user's password before saving in the database
-     * @return the new encrypted password
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

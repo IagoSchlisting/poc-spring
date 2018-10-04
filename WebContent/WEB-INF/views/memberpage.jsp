@@ -3,7 +3,7 @@
     <div class="panel panel-default">
         <div class="panel-heading" style="min-height: 45px">
             <div class="col-md-6"> Calendar Manager </div>
-            <div class="col-md-6" align="right"> You are from <strong>${team.name}</strong> </div>
+            <div class="col-md-6" align="right"> You are from <strong>${principal.team.name}</strong> </div>
         </div>
         <div class="panel-body">
             <%@ include file="templates/messages.jsp"%>

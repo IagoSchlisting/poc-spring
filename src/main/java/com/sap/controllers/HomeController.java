@@ -1,7 +1,6 @@
 package com.sap.controllers;
 
 import com.sap.service.PeriodService;
-import com.sap.service.UserService;
 import com.sap.models.Role;
 import com.sap.models.User;
 import org.springframework.stereotype.Controller;
@@ -14,15 +13,10 @@ import org.springframework.web.context.request.WebRequest;
 import javax.annotation.Resource;
 
 @Controller
-public class HomeController {
+public class HomeController extends BaseController {
 
-    @Resource
-    private UserService userService;
     @Resource
     private PeriodService periodService;
-    @Resource
-    private User principal;
-
 
     /**
      * Verify if user is from owner or member type and redirects accordingly
@@ -32,21 +26,16 @@ public class HomeController {
      */
     @RequestMapping("/")
     public String initialPage(Model model, WebRequest request){
-        // Get current user
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
-        // Return user and team information to the view
-        model.addAttribute("principal", user);
-        model.addAttribute("team", user.getTeam());
 
-        // Iterate through all roles from user and redirects accordingly
-        for (Role role: user.getRoles()){
+        User principal = this.getPrincipalUser();
+        model.addAttribute("principal", principal);
+
+        for (Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
-                // If user is from the owner type,  return all corresponding  members to the view
-                model.addAttribute("members", this.userService.listUsers(user.getTeam().getId(), user.getId()));
+                model.addAttribute("members", this.userService.listUsers(principal.getTeam().getId(), principal.getId()));
                 return "ownerpage";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
                 model.addAttribute("member", true);
-                this.principal = userService.getUserByName(request.getUserPrincipal().getName());
                 model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
                 return "memberpage";
             }
@@ -65,7 +54,6 @@ public class HomeController {
     public String login(
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout, Model model) {
-
         if (error != null) {
             model.addAttribute("error", "Invalid username and password!");
         }
@@ -74,14 +62,8 @@ public class HomeController {
         }
         return "login";
     }
-
-    /**
-     * 403 Error page
-     * @return redirects
-     */
     @RequestMapping("/403")
     public String notAllowed(){
         return "errors/403";
     }
-
 }

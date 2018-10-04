@@ -18,32 +18,26 @@ import java.util.List;
 
 
 @Controller
-public class CalendarController {
+public class CalendarController extends BaseController{
 
     @Resource
     private PeriodService periodService;
-    @Resource
-    private UserService userService;
     @Resource
     private DayService dayService;
     @Resource
     private UserDayService userDayService;
 
-    @Resource
-    private User principal;
 
     @RequestMapping(value = "/calendar/admin", method = RequestMethod.GET)
     public String CalendarPage(Model model, WebRequest request){
-        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
-        this.principal = userService.getUserByName(request.getUserPrincipal().getName());
+        User principal = this.getPrincipalUser();
         model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         return "calendar-admin";
     }
-
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
     public String PeriodPage(@PathVariable("id") int id, Model model, WebRequest request){
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
-        if(user.getRoles().get(1).getRole().equals("ROLE_MEMBER")){
+        User principal = this.getPrincipalUser();
+        if(principal.getRoles().get(1).getRole().equals("ROLE_MEMBER")){
             model.addAttribute("member", true);
         }
         model.addAttribute("days", dayService.listDays(id));
@@ -51,17 +45,16 @@ public class CalendarController {
     }
     @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
     public String DayPage(@PathVariable("id") int id, Model model, WebRequest request){
-
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
+        User principal = this.getPrincipalUser();
         model.addAttribute("day", dayService.getDayById(id));
 
-        for(Role role: user.getRoles()){
+        for(Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
                 model.addAttribute("userDays", userDayService.listUserDays(id));
                 return "owner-day-manager";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
                 model.addAttribute("member", true);
-                model.addAttribute("userDay", userDayService.findUserDay(user.getId(), id));
+                model.addAttribute("userDay", userDayService.findUserDay(principal.getId(), id));
                 return "member-day-manager";
             }
         }
@@ -70,10 +63,7 @@ public class CalendarController {
 
     @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
     public String updateUserDay(Model model, WebRequest request){
-        User user = userService.getUserByName(request.getUserPrincipal().getName());
-
         int id = Integer.parseInt(request.getParameter("id"));
-
         UserDay userDay = userDayService.getUserDayById(id);
         String shift = request.getParameter("shift");
 
@@ -125,8 +115,8 @@ public class CalendarController {
     public String addNewPeriod(WebRequest request, Model model){
 
         // Get principal user
-        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
-        int team_id = this.principal.getTeam().getId();
+        User principal = this.getPrincipalUser();
+        int team_id = principal.getTeam().getId();
 
         List<Period> periods = periodService.listPeriods(team_id);
         // Try to format data
@@ -180,7 +170,7 @@ public class CalendarController {
     }
 
     public void boundUsersToTheDate(Day day){
-        List<User> users = this.userService.listUsers(this.principal.getTeam().getId(), this.principal.getId());
+        List<User> users = this.userService.listUsers(this.getPrincipalUser().getTeam().getId(), this.getPrincipalUser().getId());
         UserDay userDay;
         for(User user : users){
             userDay = new UserDay();
@@ -210,9 +200,9 @@ public class CalendarController {
 
     @RequestMapping("/calendar/delete/{id}")
     public String removePeriod(@PathVariable("id") int id, Model model, WebRequest request){
-        //User principal = userService.getUserByName(request.getUserPrincipal().getName());
+        User principal = this.getPrincipalUser();
         periodService.removePeriod(id);
-        model.addAttribute("periods", periodService.listPeriods(this.principal.getTeam().getId()));
+        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         model.addAttribute("msg", "Period removed successfully!");
         return "calendar-admin";
     }
