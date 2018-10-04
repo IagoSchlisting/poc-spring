@@ -3,15 +3,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"> Change your password here. </div>
         <div class="panel-body">
-
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger">${error}</div>
-            </c:if>
-            <c:if test="${not empty msg}">
-                <div class="alert alert-info">${msg}</div>
-            </c:if>
-
-
+            <%@ include file="templates/messages.jsp"%>
             <form action="/changepass" method="post">
                 <div class="form-group">
                     <label for="old_password">Current Password</label>

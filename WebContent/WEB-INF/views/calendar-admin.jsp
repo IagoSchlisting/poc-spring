@@ -6,14 +6,7 @@
         <%--<div class="col-md-6" align="right"> You are from <strong>${team.name}</strong> </div>--%>
     </div>
     <div class="panel-body">
-
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger">${error}</div>
-        </c:if>
-        <c:if test="${not empty msg}">
-            <div class="alert alert-info">${msg}</div>
-        </c:if>
-
+        <%@ include file="templates/messages.jsp"%>
         <table class="table table-stripped">
             <tr>
                 <th> ID </th>

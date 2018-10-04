@@ -34,17 +34,8 @@
                 </div>
                 <div class="panel-body">
                     <div class="row">
-
-
                         <div class="col-lg-12">
-
-                            <c:if test="${not empty error}">
-                                <div class="alert alert-danger">${error}</div>
-                            </c:if>
-                            <c:if test="${not empty msg}">
-                                <div class="alert alert-info">${msg}</div>
-                            </c:if>
-
+                            <%@ include file="templates/messages.jsp"%>
                             <form:form id="login-form" action="/login" name="loginForm" method="post" style="display: ${stay ? 'none' : 'block'}">
 
                                 <div class="form-group">

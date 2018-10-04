@@ -10,15 +10,7 @@
             </c:if>
         </div>
         <div class="panel-body">
-
-            <c:if test="${not empty error}">
-                <div class="alert alert-danger">${error}</div>
-            </c:if>
-            <c:if test="${not empty msg}">
-                <div class="alert alert-info">${msg}</div>
-            </c:if>
-
-
+            <%@ include file="templates/messages.jsp"%>
             <c:if test="${empty user}">  <form action="/user/add" method="post">  </c:if>
             <c:if test="${not empty user}">  <form action="/user/edit" method="post">  </c:if>
 

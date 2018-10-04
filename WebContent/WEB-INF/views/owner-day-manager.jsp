@@ -6,15 +6,7 @@
         <div class="col-md-6"> Day Manager &nbsp;&nbsp;&nbsp; <span class="date">${day.day}</span> </div>
     </div>
     <div class="panel-body">
-
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger">${error}</div>
-        </c:if>
-        <c:if test="${not empty msg}">
-            <div class="alert alert-info">${msg}</div>
-        </c:if>
-
-
+        <%@ include file="templates/messages.jsp"%>
         <table class="table table-stripped" id="members-day">
             <tr>
                 <th> Member Name </th>
