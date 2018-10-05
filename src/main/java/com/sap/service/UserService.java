@@ -11,5 +11,5 @@ public interface UserService {
     public List<User> listUsers(int team_id, int user_id);
     public User getUserById(int id);
     public void removeUser(int id);
-
+    public Boolean notAuthorized(int id);
 }

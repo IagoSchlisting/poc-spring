@@ -1,10 +1,7 @@
 package com.sap.controllers;
 
-import com.sap.service.RoleService;
-import com.sap.service.TeamService;
-import com.sap.models.Role;
-import com.sap.models.Team;
-import com.sap.models.User;
+import com.sap.models.*;
+import com.sap.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +21,10 @@ public class UserController extends BaseController{
     private RoleService roleService;
     @Resource
     private TeamService teamService;
+    @Resource
+    private PeriodService periodService;
+    @Resource
+    private DayService dayService;
 
     /**
      * Method responsible for registering a new OWNER in the system. New member type users don't pass through this method.
@@ -35,27 +36,20 @@ public class UserController extends BaseController{
     private ModelAndView addOwner(Model model, WebRequest request){
         model.addAttribute("stay", true);
         String username = request.getParameter("new_username");
-        String pass = request.getParameter("new_password");
+        String password = request.getParameter("new_password");
         String confirm_pass = request.getParameter("confirm_password");
 
         String error = "";
-        if(username.isEmpty() || pass.isEmpty()){ error = "Username or password cannot be empty!"; }
+        if(username.isEmpty() || password.isEmpty()){ error = "Username or password cannot be empty!"; }
         if(userAlreadyExists(username)){ error = "Not possible to register the user in the system! Username already exists."; }
-        if(!new String(pass).equals(confirm_pass)){ error = "Passwords doesn't match!"; }
-
+        if(!new String(password).equals(confirm_pass)){ error = "Passwords doesn't match!"; }
         if(!error.isEmpty()){
             model.addAttribute("error", error);
             return new ModelAndView("/login");
         }
-        try
-        {
-            User user = new User();
-            user.setEnabled(true);
-            user.setUsername(username);
-            user.setPassword(passwordEncoder().encode(pass));
-            user.setRoles(giveRoles(true));
-            user.setTeam(createOwnersTeam(username));
-            userService.addUser(user);
+        try{
+            List<Role> roles = giveRoles(true);
+            this.createUser(username, password, createOwnersTeam(username), roles);
             model.addAttribute("stay", false);
             model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
         }
@@ -63,6 +57,23 @@ public class UserController extends BaseController{
             model.addAttribute("error", e.getMessage());
         }
         return new ModelAndView("/login");
+    }
+
+    /**
+     * Responsible for saving users in the database.
+     * @param username
+     * @param password
+     * @param team
+     */
+    private User createUser(String username, String password, Team team, List<Role> roles){
+        User user = new User();
+        user.setEnabled(true);
+        user.setUsername(username);
+        user.setPassword(passwordEncoder().encode(password));
+        user.setRoles(roles);
+        user.setTeam(team);
+        userService.addUser(user);
+        return user;
     }
 
     /**
@@ -117,29 +128,12 @@ public class UserController extends BaseController{
      */
     @RequestMapping("/user/delete/{id}")
     public RedirectView removeMember(@PathVariable("id") int id, Model model){
-        User principal = this.getPrincipalUser();
-        if(notAuthorized(principal, id)){ return new RedirectView("/403");  }
-        userService.removeUser(id);
+        try{
+            userService.removeUser(id);
+        }catch (RuntimeException e){
+            return new RedirectView("/403");
+        }
         return new RedirectView("/");
-    }
-
-    /**
-     * Verify if user is not trying to execute an action at himself or at some member that is not from his team.
-     * @param principal
-     * @param id
-     * @return Boolean
-     */
-    public Boolean notAuthorized(User principal, int id) {
-        // User cannot execute action at himself !IMPORTANT
-        if (principal.getId() == id) {
-            return true;
-        }
-        User user = userService.getUserById(id);
-        // Owner cannot execute an action with a member that is not from his team !IMPORTANT
-        if (principal.getTeam().getId() != user.getTeam().getId()) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -150,8 +144,7 @@ public class UserController extends BaseController{
      */
     @RequestMapping("/user/edit/{id}")
     public String editMember(@PathVariable("id") int id, Model model){
-        User principal = this.getPrincipalUser();
-        if(notAuthorized(principal, id)){return "errors/403";}
+        if(this.userService.notAuthorized(id)){return "errors/403";}
         List<Team> teams = teamService.listTeams();
         model.addAttribute("user", userService.getUserById(id));
         model.addAttribute("teams", teams);
@@ -187,13 +180,9 @@ public class UserController extends BaseController{
         }
 
         try {
-            User user = new User();
-            user.setUsername(username);
-            user.setPassword(passwordEncoder().encode("password"));
-            user.setEnabled(true);
-            user.setRoles(giveRoles(false));
-            user.setTeam(this.getPrincipalUser().getTeam());
-            userService.addUser(user);
+            List<Role> roles = giveRoles(false);
+            User user = this.createUser(username, "password", this.getPrincipalUser().getTeam(), roles);
+            this.boundNewUserToPeriods(user);
             model.addAttribute("msg", "New member registered successfully!");
         }
         catch (Exception e){
@@ -201,6 +190,23 @@ public class UserController extends BaseController{
         }
         return "add-edit-user";
     }
+
+    /**
+     * Responsible for bounding new created users to all periods created by the owner
+     * @param user
+     */
+    private void boundNewUserToPeriods(User user){
+        List<Period> periods = this.periodService.listPeriods(user.getTeam().getId());
+        List<Day> days;
+
+        for(Period period : periods){
+            days = this.dayService.listDays(period.getId());
+            for(Day day: days){
+                this.createUserDay(user, day);
+            }
+        }
+    }
+
 
     /**
      * Responsible for edit member type users
@@ -220,10 +226,6 @@ public class UserController extends BaseController{
 
         model.addAttribute("user", user);
         model.addAttribute("teams", teamService.listTeams());
-
-        User principal = this.getPrincipalUser();
-
-        if(notAuthorized(principal, id)){return "errors/403";}
 
         if (username.isEmpty()) {
             model.addAttribute("error", "Username can't be empty!");

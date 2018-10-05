@@ -1,6 +1,10 @@
 package com.sap.controllers;
 
+import com.sap.models.Day;
+import com.sap.models.Shift;
 import com.sap.models.User;
+import com.sap.models.UserDay;
+import com.sap.service.UserDayService;
 import com.sap.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
@@ -16,21 +20,37 @@ public class BaseController {
 
     @Resource
     protected UserService userService;
+    @Resource
+    protected UserDayService userDayService;
 
     /**
      * Get current session user
      * @return object User
      */
-    public User getPrincipalUser(){
+    protected User getPrincipalUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userService.getUserByName(authentication.getName());
+    }
+
+    /**
+     * Save user / day bond in the database (used by user and calendar controllers)
+     * @param user
+     * @param day
+     */
+    protected void createUserDay(User user, Day day){
+        UserDay userDay = new UserDay();
+        userDay.setDay(day);
+        userDay.setUser(user);
+        userDay.setShift(Shift.ANY);
+        userDay.setDisponibility(true);
+        this.userDayService.addUserDay(userDay);
     }
 
     /**
      * @return encoder
      */
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

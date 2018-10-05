@@ -29,11 +29,11 @@
     color: white;
     font-size: medium;
 }
-.true{ background-color: green}
-.false{ background-color: red }
-.LATE{background-color: #262626}
-.DAY{background-color: gold}
-.ANY{background-color: #888888}
+.true{ background-color: #64a664}
+.false{ background-color: #e25959 }
+.LATE{background-color: #554f68}
+.DAY{background-color: #e7d052}
+.ANY{background-color: #5095cd}
 
 .form-check-label{
     font-weight: normal;

@@ -3,7 +3,6 @@ package com.sap.controllers;
 import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
-import com.sap.service.UserDayService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,18 +22,15 @@ public class CalendarController extends BaseController{
     private PeriodService periodService;
     @Resource
     private DayService dayService;
-    @Resource
-    private UserDayService userDayService;
 
 
     /**
      * Renderize the calendar-admin page
      * @param model
-     * @param request
      * @return calendar page
      */
     @RequestMapping(value = "/calendar/admin", method = RequestMethod.GET)
-    public String CalendarPage(Model model, WebRequest request){
+    public String CalendarPage(Model model){
         User principal = this.getPrincipalUser();
         model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
         return "calendar-admin";
@@ -44,13 +40,11 @@ public class CalendarController extends BaseController{
      * Renderize the period page
      * @param id
      * @param model
-     * @param request
      * @return period page
      */
     @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
-    public String PeriodPage(@PathVariable("id") int id, Model model, WebRequest request){
-        User principal = this.getPrincipalUser();
-        if(principal.getRoles().get(1).getRole().equals("ROLE_MEMBER")){
+    public String PeriodPage(@PathVariable("id") int id, Model model){
+        if(this.getPrincipalUser().getRoles().get(1).getRole().equals("ROLE_MEMBER")){
             model.addAttribute("member", true);
         }
         model.addAttribute("days", dayService.listDays(id));
@@ -61,14 +55,12 @@ public class CalendarController extends BaseController{
      * Renderize day page
      * @param id
      * @param model
-     * @param request
      * @return day page
      */
     @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
-    public String DayPage(@PathVariable("id") int id, Model model, WebRequest request){
+    public String DayPage(@PathVariable("id") int id, Model model){
         User principal = this.getPrincipalUser();
         model.addAttribute("day", dayService.getDayById(id));
-
         for(Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
                 model.addAttribute("userDays", userDayService.listUserDays(id));
@@ -91,16 +83,21 @@ public class CalendarController extends BaseController{
     @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
     public String updateUserDay(Model model, WebRequest request){
         model.addAttribute("member", true);
+
         int id = Integer.parseInt(request.getParameter("id"));
         UserDay userDay = userDayService.getUserDayById(id);
         String shift = request.getParameter("shift");
 
-        if(shift.equals("day")){
-            userDay.setShift(Shift.DAY);
-        }else if (shift.equals("late")){
-            userDay.setShift(Shift.LATE);
-        }else {
-            userDay.setShift(Shift.ANY);
+        switch (shift){
+            case "day":
+                userDay.setShift(Shift.DAY);
+                break;
+            case "late":
+                userDay.setShift(Shift.LATE);
+                break;
+            default:
+                userDay.setShift(Shift.ANY);
+                break;
         }
 
         if(request.getParameterMap().containsKey("disponibility")){
@@ -210,17 +207,10 @@ public class CalendarController extends BaseController{
      */
     public void boundUsersToTheDate(Day day){
         List<User> users = this.userService.listUsers(this.getPrincipalUser().getTeam().getId(), this.getPrincipalUser().getId());
-        UserDay userDay;
         for(User user : users){
-            userDay = new UserDay();
-            userDay.setDay(day);
-            userDay.setUser(user);
-            userDay.setDisponibility(true);
-            userDay.setShift(Shift.ANY);
-            userDayService.addUserDay(userDay);
+            this.createUserDay(user, day);
         }
     }
-
 
     /**
      * Validate if there are no conflicts between each of the period's days
@@ -248,11 +238,10 @@ public class CalendarController extends BaseController{
      * Method responsible for deleting the period. It automatically deletes all days and bounded users from the database.
      * @param id
      * @param model
-     * @param request
      * @return calendar-admin page
      */
     @RequestMapping("/calendar/delete/{id}")
-    public String removePeriod(@PathVariable("id") int id, Model model, WebRequest request){
+    public String removePeriod(@PathVariable("id") int id, Model model){
         User principal = this.getPrincipalUser();
         periodService.removePeriod(id);
         model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
