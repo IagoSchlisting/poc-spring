@@ -3,7 +3,6 @@
 <div class="panel panel-default">
     <div class="panel-heading" style="min-height: 45px">
         <div class="col-md-6"> Period Manager </div>
-        <%--<div class="col-md-6" align="right"> You are from <strong>${team.name}</strong> </div>--%>
     </div>
     <div class="panel-body">
         <div style="margin-left: 10%">
@@ -24,7 +23,6 @@
                                 </c:choose>
                             </td>
                         </tr>
-                        <%--<tr><td><a href="/day/${day.id}"> Manage the day </a></td></tr>--%>
                     </table>
                 </div>
                 </a>

@@ -10,6 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -202,7 +204,9 @@ public class UserController extends BaseController{
         for(Period period : periods){
             days = this.dayService.listDays(period.getId());
             for(Day day: days){
-                this.createUserDay(user, day);
+                if(!day.getDay().isBefore(LocalDate.now())){
+                    this.createUserDay(user, day);
+                }
             }
         }
     }

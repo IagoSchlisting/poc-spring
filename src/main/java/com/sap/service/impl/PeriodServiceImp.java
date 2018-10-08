@@ -25,4 +25,9 @@ public class PeriodServiceImp  implements PeriodService {
         this.periodDao.removePeriod(id);
     }
 
+    @Override
+    public Period getPeriodById(int id){
+        return this.periodDao.getPeriodById(id);
+    };
+
 }

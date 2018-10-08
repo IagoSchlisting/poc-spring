@@ -25,5 +25,8 @@ public class PeriodDaoImp extends HibernateDaoSupport implements PeriodDao {
         getHibernateTemplate().delete(period);
     }
 
+    public Period getPeriodById(int id){
+        return this.getHibernateTemplate().get(Period.class, id);
+    }
 
 }

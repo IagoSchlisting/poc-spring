@@ -8,5 +8,6 @@ public interface PeriodDao {
     public void addPeriod(Period period);
     public List<Period> listPeriods(int team_id);
     public void removePeriod(int id);
+    public Period getPeriodById(int id);
 }
 
