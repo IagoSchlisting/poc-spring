@@ -102,7 +102,7 @@ public class UserController extends BaseController{
      * @param model
      * @return edit page
      */
-    @RequestMapping("/user/edit/{id}")
+    @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.GET)
     public String editMember(@PathVariable("id") int id, Model model){
         if(this.userService.notAuthorized(id)){return "errors/403";}
         List<Team> teams = teamService.listTeams();
@@ -169,15 +169,16 @@ public class UserController extends BaseController{
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
     public String saveEditedMember(Model model, UserDTO user) {
         if(this.userService.notAuthorized(user.getId())){return "errors/403";}
+        model.addAttribute("user", user);
+        model.addAttribute("teams", teamService.listTeams());
         try
         {
-            user.setTeam(teamService.getTeamById(user.getTeamId()));
             userService.updateUser(user);
-            model.addAttribute("user", user);
-            model.addAttribute("teams", teamService.listTeams());
             model.addAttribute("msg", "Member edited successfully!");
         }
-        catch (IllegalArgumentException e){ model.addAttribute("error", e.getMessage()); }
+        catch (IllegalArgumentException e){
+            model.addAttribute("error", e.getMessage());
+        }
         return "add-edit-user";
     }
 

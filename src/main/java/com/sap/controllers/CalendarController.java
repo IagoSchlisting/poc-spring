@@ -1,6 +1,8 @@
 package com.sap.controllers;
 
+import com.sap.dto.DayDTO;
 import com.sap.dto.PeriodDTO;
+import com.sap.dto.UserDayDTO;
 import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
@@ -106,67 +108,41 @@ public class CalendarController extends BaseController{
     /**
      * Allows member user to update his disponibility and shift informations from specifc day
      * @param model
-     * @param request
      * @return member-day-manager page
      */
     @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
-    public String updateUserDay(Model model, WebRequest request){
+    public String updateUserDay(Model model, UserDayDTO userDay){
         model.addAttribute("member", true);
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        UserDay userDay = userDayService.getUserDayById(id);
-        String shift = request.getParameter("shift");
-
-        switch (shift){
-            case "day":
-                userDay.setShift(Shift.DAY);
-                break;
-            case "late":
-                userDay.setShift(Shift.LATE);
-                break;
-            default:
-                userDay.setShift(Shift.ANY);
-                break;
-        }
-
-        if(request.getParameterMap().containsKey("disponibility")){
-            userDay.setDisponibility(request.getParameter("disponibility").equals("1") ? true : false);
-        }
-
         try{
-            userDayService.updateUserDay(userDay);
-            model.addAttribute("userDay", userDayService.getUserDayById(id));
-            model.addAttribute("day", userDay.getDay());
+            UserDay updated_userDay = userDayService.updateUserDay(userDay);
+            model.addAttribute("userDay", updated_userDay);
+            model.addAttribute("day", updated_userDay.getDay());
             model.addAttribute("msg", "Changes Saved!");
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
+            model.addAttribute("periods", periodService.listPeriods(this.getPrincipalUser().getTeam().getId()));
+            return "memberpage";
         }
         return "member-day-manager";
     }
 
     /**
      * Allows owners to set day as weekend or holiday
-     * @param request
      * @param model
      * @return owner-day-manager page
      */
     @RequestMapping(value = "/day/admin/update", method = RequestMethod.POST)
-    public String updateDay(WebRequest request, Model model){
-        int id = Integer.parseInt(request.getParameter("id"));
-        if(this.notAuthorized(id, "day")){return "errors/403";}
-
+    public String updateDay(Model model, DayDTO day){
+        if(this.notAuthorized(day.getId(), "day")){return "errors/403";}
         try{
-            Day day = dayService.getDayById(id);
-            day.setSpecial(request.getParameter("special").equals("1") ? true : false);
             dayService.updateDay(day);
             model.addAttribute("msg", "Changed!");
         }catch(Exception e){
             model.addAttribute("error", e.getMessage());
 
         }
-
-        model.addAttribute("day", dayService.getDayById(id));
-        model.addAttribute("userDays", userDayService.listUserDays(id));
+        model.addAttribute("day", this.dayService.getDayById(day.getId()));
+        model.addAttribute("userDays", userDayService.listUserDays(day.getId()));
         return "owner-day-manager";
     }
 
@@ -217,6 +193,12 @@ public class CalendarController extends BaseController{
         return "calendar-admin";
     }
 
+    /**
+     * Verify if user has authorization to execute action
+     * @param id
+     * @param type
+     * @return boolean
+     */
     public Boolean notAuthorized(int id, String type) {
         User principal = this.getPrincipalUser();
 

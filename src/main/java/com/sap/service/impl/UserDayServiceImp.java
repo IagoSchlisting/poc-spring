@@ -1,6 +1,8 @@
 package com.sap.service.impl;
 
 import com.sap.dao.UserDayDao;
+import com.sap.dto.UserDayDTO;
+import com.sap.models.Shift;
 import com.sap.models.UserDay;
 import com.sap.service.UserDayService;
 
@@ -21,8 +23,23 @@ public class UserDayServiceImp implements UserDayService {
         return this.userDayDao.listUserDays(day_id);
     }
     @Override
-    public void updateUserDay(UserDay userDay){
-        this.userDayDao.updateUserDay(userDay);
+    public UserDay updateUserDay(UserDayDTO userDay){
+        UserDay updated_userDay = this.getUserDayById(userDay.getId());
+        switch (userDay.getShift()){
+            case "day":
+                updated_userDay.setShift(Shift.DAY);
+                break;
+            case "late":
+                updated_userDay.setShift(Shift.LATE);
+                break;
+            default:
+                updated_userDay.setShift(Shift.ANY);
+                break;
+        }
+
+        updated_userDay.setDisponibility(userDay.getDisponibility());
+        this.userDayDao.updateUserDay(updated_userDay);
+        return updated_userDay;
     }
     @Override
     public UserDay getUserDayById(int id){

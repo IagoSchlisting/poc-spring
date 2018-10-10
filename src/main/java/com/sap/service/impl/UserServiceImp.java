@@ -2,6 +2,7 @@ package com.sap.service.impl;
 import com.sap.dao.UserDao;
 import com.sap.dto.PassDTO;
 import com.sap.dto.UserDTO;
+import com.sap.service.TeamService;
 import com.sap.service.UserService;
 import com.sap.models.User;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,8 @@ public class UserServiceImp implements UserService {
 
     @Resource
     private UserDao userDao;
+    @Resource
+    private TeamService teamService;
 
     @Override
     public User addUser(UserDTO user) {
@@ -44,12 +47,15 @@ public class UserServiceImp implements UserService {
         if(user.getUsername().isEmpty()){
             throw new IllegalArgumentException("Username cannot be empty!");
         }
-        if (!new String(user.getUsername()).equals(this.getUserById(user.getId()))){
+        if (!new String(user.getUsername()).equals(this.getUserById(user.getId()).getUsername())){
             if (userAlreadyExists(user.getUsername())) {
                 throw new IllegalArgumentException("Not possible to edit member! Username already exists.");
             }
         }
-        this.userDao.updateUser(convertDTO(user));
+        User original = this.getUserById(user.getId());
+        original.setUsername(user.getUsername());
+        original.setTeam(this.teamService.getTeamById(user.getTeamId()));
+        this.userDao.updateUser(original);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.sap.service.impl;
 
 import com.sap.dao.DayDao;
+import com.sap.dto.DayDTO;
 import com.sap.models.Day;
 import com.sap.service.DayService;
 
@@ -24,8 +25,10 @@ public class DayServiceImp  implements DayService {
     public Day getDayById(int id){ return this.dayDao.getDayById(id);}
 
     @Override
-    public void updateDay(Day day){
-        this.dayDao.updateDay(day);
+    public void updateDay(DayDTO day){
+        Day updatedDay = this.getDayById(day.getId());
+        updatedDay.setSpecial(day.getSpecial());
+        this.dayDao.updateDay(updatedDay);
     }
 
 

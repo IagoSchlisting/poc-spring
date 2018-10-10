@@ -26,7 +26,7 @@
             <c:if test="${not empty teams}">
                 <div class="form-group">
                     <label for="team"> Change Team </label>
-                    <select id="team" name="team" class="form-control">
+                    <select id="teamId" name="teamId" class="form-control">
                         <c:forEach var="team" items="${teams}">
                             <c:choose>
                                 <c:when test="${user.team.name == team.name}">
