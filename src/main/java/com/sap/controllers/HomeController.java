@@ -1,5 +1,6 @@
 package com.sap.controllers;
 
+import com.sap.dto.UserDTO;
 import com.sap.service.PeriodService;
 import com.sap.models.Role;
 import com.sap.models.User;
@@ -60,7 +61,17 @@ public class HomeController extends BaseController {
         if (logout != null) {
             model.addAttribute("msg", "You've been logged out successfully.");
         }
+        //model.addAttribute("user",new UserDTO());
         return "login";
+    }
+
+    /**
+     * Only redirects to the changepass user's page
+     * @return changepass page
+     */
+    @RequestMapping(value = "/changepass", method = RequestMethod.GET)
+    public String changePass(){
+        return "changepass";
     }
 
     /**

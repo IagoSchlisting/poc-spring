@@ -1,8 +1,13 @@
 package com.sap.service.impl;
 import com.sap.dao.UserDao;
+import com.sap.dto.PassDTO;
+import com.sap.dto.UserDTO;
 import com.sap.service.UserService;
 import com.sap.models.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -13,17 +18,53 @@ public class UserServiceImp implements UserService {
     private UserDao userDao;
 
     @Override
-    public void addUser(User user) {
-        this.userDao.addUser(user);
+    public User addUser(UserDTO user) {
+        if(user.getUsername().isEmpty() || user.getPassword().isEmpty()){
+            throw new IllegalArgumentException("Username or password cannot be empty!");
+        }
+        if(userAlreadyExists(user.getUsername())){
+            throw new IllegalArgumentException("Not possible to register the user in the system! Username already exists.");
+        }
+        if(!new String(user.getPassword()).equals(user.getConfirmPassword())){
+            throw new IllegalArgumentException("Passwords doesn't match!");
+        }
+
+        user.setEnabled(true);
+        user.setPassword(passwordEncoder().encode(user.getPassword()));
+        User new_user = convertDTO(user);
+        this.userDao.addUser(new_user);
+        return new_user;
     }
 
     @Override
     public User getUserByName(String name){ return this.userDao.getUserByName(name);}
 
     @Override
-    public void updateUser(User user) {
-        if(notAuthorized(user.getId())){ throw new RuntimeException("You are not allowed to execute this action, you idiot."); }
-        this.userDao.updateUser(user);
+    public void updateUser(UserDTO user) {
+        if(user.getUsername().isEmpty()){
+            throw new IllegalArgumentException("Username cannot be empty!");
+        }
+        if (!new String(user.getUsername()).equals(this.getUserById(user.getId()))){
+            if (userAlreadyExists(user.getUsername())) {
+                throw new IllegalArgumentException("Not possible to edit member! Username already exists.");
+            }
+        }
+        this.userDao.updateUser(convertDTO(user));
+    }
+
+    @Override
+    public void updateUserPass(PassDTO pass){
+        if(pass.getOldPassword().isEmpty() || pass.getNewPassword().isEmpty() || pass.getConfirmPassword().isEmpty()){
+            throw new IllegalArgumentException("Fields can't be empty!");
+        }
+        if(!passwordEncoder().matches(pass.getOldPassword(), pass.getUser().getPassword())){
+            throw new IllegalArgumentException("Current pass doesn't match!");
+        }
+        if(!new String(pass.getNewPassword()).equals(pass.getConfirmPassword())){
+            throw new IllegalArgumentException("Passwords doesn't match!");
+        }
+        pass.getUser().setPassword(passwordEncoder().encode(pass.getNewPassword()));
+        this.userDao.updateUser(pass.getUser());
     }
 
     @Override
@@ -38,8 +79,32 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void removeUser(int id) {
-        if(notAuthorized(id)){ throw new RuntimeException(); }
         this.userDao.removeUser(id);
+    }
+
+
+    /**
+     * Convert DTO to original user
+     * @param user
+     * @return original user
+     */
+    private User convertDTO(UserDTO user){
+        User new_user = new User();
+        new_user.setUsername(user.getUsername());
+        new_user.setPassword(user.getPassword());
+        new_user.setTeam(user.getTeam());
+        new_user.setRoles(user.getRoles());
+        new_user.setEnabled(user.getEnabled());
+        return new_user;
+    }
+
+    /**
+     * Verify if username already exists
+     * @param username
+     * @return boolean
+     */
+    private Boolean userAlreadyExists(String username){
+        return this.getUserByName(username).getUsername() != null;
     }
 
     /**
@@ -60,5 +125,14 @@ public class UserServiceImp implements UserService {
         }
         return false;
     }
+
+    /**
+     * @return encoder
+     */
+    @Bean
+    private PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
 
 }

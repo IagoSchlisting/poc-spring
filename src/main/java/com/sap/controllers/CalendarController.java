@@ -1,5 +1,6 @@
 package com.sap.controllers;
 
+import com.sap.dto.PeriodDTO;
 import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -78,6 +80,28 @@ public class CalendarController extends BaseController{
         }
         return "login";
     }
+
+    /**
+     * Allows owner to create a new period if the same respects the validations
+     * @param model
+     * @return updated calendar-admin page
+     */
+    @RequestMapping(value = "/period/add", method = RequestMethod.POST)
+    public String addNewPeriod(Model model, PeriodDTO period){
+        try{
+            period.setTeam(this.getPrincipalUser().getTeam());
+            Period new_period = periodService.addPeriod(period);
+            createDaysFromPeriod(new_period);
+            model.addAttribute("periods", periodService.listPeriods(period.getTeam().getId()));
+            model.addAttribute("msg", "Period added successfully!");
+        }catch (IllegalArgumentException e){
+            model.addAttribute("periods", this.periodService.listPeriods(period.getTeam().getId()));
+            model.addAttribute("error", e.getMessage());
+        }
+
+        return "calendar-admin";
+    }
+
 
     /**
      * Allows member user to update his disponibility and shift informations from specifc day
@@ -147,44 +171,6 @@ public class CalendarController extends BaseController{
     }
 
     /**
-     * Allows owner to create a new period if the same respects the validations
-     * @param request
-     * @param model
-     * @return updated calendar-admin page
-     */
-    @RequestMapping(value = "/period/add", method = RequestMethod.POST)
-    public String addNewPeriod(WebRequest request, Model model){
-
-        User principal = this.getPrincipalUser();
-        int team_id = principal.getTeam().getId();
-
-        List<Period> periods = periodService.listPeriods(team_id);
-        LocalDate start = LocalDate.parse(request.getParameter("start-date"));
-        LocalDate end = LocalDate.parse(request.getParameter("end-date"));
-
-        if(!validatePeriods(periods, start, end)){
-            model.addAttribute("error", "Not possible to create a period between this dates, check the corresponding values!");
-            model.addAttribute("periods", periods);
-            return "calendar-admin";
-        }
-
-        try{
-            Period period = new Period();
-            period.setStart(start);
-            period.setEnd(end);
-            period.setTeam(principal.getTeam());
-            periodService.addPeriod(period);
-            createDaysFromPeriod(period);
-            model.addAttribute("periods", periodService.listPeriods(team_id));
-            model.addAttribute("msg", "Period added successfully!");
-        }catch (Exception e){
-            model.addAttribute("error", e.getMessage());
-        }
-
-        return "calendar-admin";
-    }
-
-    /**
      * Create individual days to the last added period
      * @param period
      */
@@ -212,29 +198,6 @@ public class CalendarController extends BaseController{
         for(User user : users){
             this.createUserDay(user, day);
         }
-    }
-
-    /**
-     * Validate if there are no conflicts between each of the period's days
-     * @param periods
-     * @param start
-     * @param end
-     * @return Boolean which symbolizes success or error
-     */
-    public Boolean validatePeriods(List<Period> periods, LocalDate start, LocalDate end){
-        if(start.isBefore(LocalDate.now()) || start.isAfter(end)){return false;}
-        for(Period period : periods){
-            if (start.isEqual(period.getStart())
-                    || start.isEqual(period.getEnd())
-                    || end.isEqual(period.getEnd())
-                    || end.isEqual(period.getStart())
-                    || (start.isAfter(period.getStart()) && start.isBefore(period.getEnd()))
-                    || (start.isBefore(period.getStart()) && end.isAfter(period.getStart()))
-            ){
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

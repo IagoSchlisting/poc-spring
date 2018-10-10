@@ -1,5 +1,6 @@
 package com.sap.controllers;
 
+import com.sap.dto.UserDTO;
 import com.sap.models.Day;
 import com.sap.models.Shift;
 import com.sap.models.User;
@@ -53,5 +54,6 @@ public class BaseController {
     protected PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }

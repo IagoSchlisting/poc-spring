@@ -47,12 +47,12 @@
                         <form action="/period/add" method="post">
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <div class="form-group">
-                                <label for="start-date">Start Date</label>
-                                <input type="date" class="form-control" id="start-date" name="start-date">
+                                <label for="startDate">Start Date</label>
+                                <input type="date" class="form-control" id="startDate" name="startDate">
                             </div>
                             <div class="form-group">
-                                <label for="end-date">End Date</label>
-                                <input type="date" class="form-control" id="end-date" name="end-date">
+                                <label for="endDate">End Date</label>
+                                <input type="date" class="form-control" id="endDate" name="endDate">
                             </div>
                             
                     </div>

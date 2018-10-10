@@ -6,16 +6,16 @@
             <%@ include file="templates/messages.jsp"%>
             <form action="/changepass" method="post">
                 <div class="form-group">
-                    <label for="old_password">Current Password</label>
-                    <input type="password" class="form-control" id="old_password" name="old_password">
+                    <label for="oldPassword">Current Password</label>
+                    <input type="password" class="form-control" id="oldPassword" name="oldPassword">
                 </div>
                 <div class="form-group">
-                    <label for="new_password">New Password</label>
-                    <input type="password" class="form-control" id="new_password" name="new_password">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" class="form-control" id="newPassword" name="newPassword">
                 </div>
                 <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
                 </div>
 
                 <a href="/" class="btn btn-danger"> Back </a>
