@@ -109,7 +109,7 @@ public class UserServiceImp implements UserService {
      * @param username
      * @return boolean
      */
-    private Boolean userAlreadyExists(String username){
+    public Boolean userAlreadyExists(String username){
         return this.getUserByName(username).getUsername() != null;
     }
 

@@ -54,6 +54,7 @@
                             </form:form>
 
                             <form:form id="register-form" action="/register" name="user" method="post" style="display: ${stay ? 'block' : 'none'}">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                                 <div class="form-group">
                                     <input type="text" name="username" id="new_username" tabindex="1" class="form-control" placeholder="Username" value="">
                                 </div>

@@ -7,7 +7,7 @@ import com.sap.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-public class UserController extends BaseController{
+public class UserController extends CommonController {
 
     @Resource
     private RoleService roleService;
@@ -30,22 +30,23 @@ public class UserController extends BaseController{
 
     /**
      * Method responsible for registering a new OWNER in the system. New member type users don't pass through this method.
-     * @param model
+     * @param redirectAttributes
      * @return / redirects to the login page with a success or error message
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    private ModelAndView addOwner(Model model, UserDTO user){
+    private RedirectView addOwner(RedirectAttributes redirectAttributes, UserDTO user){
         try{
             user.setRoles(giveRoles(true));
-            user.setTeam(createOwnersTeam(user.getUsername()));
+            Team team = createOwnersTeam(user.getUsername());
+            user.setTeam(team);
             this.userService.addUser(user);
-            model.addAttribute("msg", "You've been registered successfully. Try to Log in!");
+            redirectAttributes.addFlashAttribute("msg", "You've been registered successfully. Try to Log in!");
         }
         catch (IllegalArgumentException e){
-            model.addAttribute("stay", true);
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("stay", true);
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return new ModelAndView("/login");
+        return new RedirectView("/login");
     }
 
     /**
@@ -55,6 +56,14 @@ public class UserController extends BaseController{
      */
     public Team createOwnersTeam(String username){
         Team team = new Team();
+
+        if(username.isEmpty()){
+            throw new IllegalArgumentException("Username cannot be empty!");
+        }
+        if(this.userService.userAlreadyExists(username)){
+            throw new IllegalArgumentException("Username already exists!");
+        }
+
         team.setName(username + "'s team");
         teamService.addTeam(team);
         return team;
@@ -97,36 +106,12 @@ public class UserController extends BaseController{
     }
 
     /**
-     * Method responsible for editing user
-     * @param id
-     * @param model
-     * @return edit page
-     */
-    @RequestMapping(value = "/user/edit/{id}", method = RequestMethod.GET)
-    public String editMember(@PathVariable("id") int id, Model model){
-        if(this.userService.notAuthorized(id)){return "errors/403";}
-        List<Team> teams = teamService.listTeams();
-        model.addAttribute("user", userService.getUserById(id));
-        model.addAttribute("teams", teams);
-        return "add-edit-user";
-    }
-
-    /**
-     * Only redirects to the add user's page
-     * @return add page
-     */
-    @RequestMapping(value = "/user/add", method = RequestMethod.GET)
-    public String addMember(){
-        return "add-edit-user";
-    }
-
-    /**
      * Responsible for adding new member. Action called through the owners interface
-     * @param model
+     * @param redirectAttributes
      * @return success or error message in the add/edit page
      */
     @RequestMapping(value = "/user/add", method = RequestMethod.POST)
-    public String addMember(Model model, UserDTO user){
+    public RedirectView addMember(RedirectAttributes redirectAttributes, UserDTO user){
         try{
             user.setRoles(giveRoles(false));
             user.setTeam(this.getPrincipalUser().getTeam());
@@ -134,13 +119,12 @@ public class UserController extends BaseController{
             user.setConfirmPassword("password");
             User new_user = this.userService.addUser(user);
             this.boundNewUserToPeriods(new_user);
-            model.addAttribute("msg", "New member registered successfully!");
+            redirectAttributes.addFlashAttribute("msg", "New member registered successfully!");
         }
         catch (IllegalArgumentException e){
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-
-        return "add-edit-user";
+        return new RedirectView("/user/add");
     }
 
     /**
@@ -163,40 +147,36 @@ public class UserController extends BaseController{
 
     /**
      * Responsible for edit member type users
-     * @param model
+     * @param redirectAttributes
      * @return success or error message in the add/edit page
      */
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST)
-    public String saveEditedMember(Model model, UserDTO user) {
-        if(this.userService.notAuthorized(user.getId())){return "errors/403";}
-        model.addAttribute("user", user);
-        model.addAttribute("teams", teamService.listTeams());
-        try
-        {
+    public RedirectView saveEditedMember(RedirectAttributes redirectAttributes, UserDTO user) {
+        if(this.userService.notAuthorized(user.getId())){ new RedirectView("/403");}
+        try{
             userService.updateUser(user);
-            model.addAttribute("msg", "Member edited successfully!");
+            redirectAttributes.addFlashAttribute("msg", "Member edited successfully!");
+        }catch (IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        catch (IllegalArgumentException e){
-            model.addAttribute("error", e.getMessage());
-        }
-        return "add-edit-user";
+        return new RedirectView("/user/edit/" + user.getId());
     }
 
     /**
      * Allows user to change password when needed
-     * @param model
+     * @param redirectAttributes
      * @return success or error message in the changepass page
      */
     @RequestMapping(value = "/changepass", method = RequestMethod.POST)
-    public String changePassdb(Model model, PassDTO pass){
+    public RedirectView changePassdb(RedirectAttributes redirectAttributes, PassDTO pass){
         try{
             pass.setUser(this.getPrincipalUser());
             userService.updateUserPass(pass);
-            model.addAttribute("msg", "Password changed successfully!");
+            redirectAttributes.addFlashAttribute("msg", "Password changed successfully!");
         }
         catch (IllegalArgumentException e){
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        return "changepass";
+        return new RedirectView("/changepass");
     }
 }

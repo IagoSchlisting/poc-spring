@@ -17,7 +17,7 @@ import org.springframework.stereotype.Controller;
 import javax.annotation.Resource;
 
 @Controller
-public class BaseController {
+public class CommonController {
 
     @Resource
     protected UserService userService;
@@ -46,14 +46,4 @@ public class BaseController {
         userDay.setDisponibility(true);
         this.userDayService.addUserDay(userDay);
     }
-
-    /**
-     * @return encoder
-     */
-    @Bean
-    protected PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
 }

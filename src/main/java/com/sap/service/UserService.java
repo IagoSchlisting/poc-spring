@@ -15,4 +15,5 @@ public interface UserService {
     public User getUserById(int id);
     public void removeUser(int id);
     public Boolean notAuthorized(int id);
+    public Boolean userAlreadyExists(String username);
 }

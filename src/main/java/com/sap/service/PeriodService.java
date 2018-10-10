@@ -10,4 +10,5 @@ public interface PeriodService {
     public List<Period> listPeriods(int team_id);
     public void removePeriod(int id);
     public Period getPeriodById(int id);
+    public Boolean notAuthorized(int id);
 }

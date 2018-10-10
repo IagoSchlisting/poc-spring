@@ -49,4 +49,5 @@ public class UserDayServiceImp implements UserDayService {
     public UserDay findUserDay(int user_id, int day_id){
         return this.userDayDao.findUserDay(user_id, day_id);
     }
+
 }

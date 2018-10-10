@@ -6,144 +6,78 @@ import com.sap.dto.UserDayDTO;
 import com.sap.models.*;
 import com.sap.service.DayService;
 import com.sap.service.PeriodService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 
 
 @Controller
-public class CalendarController extends BaseController{
+public class CalendarController extends CommonController {
 
     @Resource
     private PeriodService periodService;
     @Resource
     private DayService dayService;
 
-
-    /**
-     * Renderize the calendar-admin page
-     * @param model
-     * @return calendar page
-     */
-    @RequestMapping(value = "/calendar/admin", method = RequestMethod.GET)
-    public String CalendarPage(Model model){
-        User principal = this.getPrincipalUser();
-        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
-        return "calendar-admin";
-    }
-
-    /**
-     * Renderize the period page
-     * @param id
-     * @param model
-     * @return period page
-     */
-    @RequestMapping(value = "/calendar/manage/{id}", method = RequestMethod.GET)
-    public String PeriodPage(@PathVariable("id") int id, Model model){
-        if(this.notAuthorized(id, "period")){return "errors/403";}
-        if(this.getPrincipalUser().getRoles().get(1).getRole().equals("ROLE_MEMBER")){
-            model.addAttribute("member", true);
-        }
-        model.addAttribute("days", dayService.listDays(id));
-        return "period-days";
-    }
-
-    /**
-     * Renderize day page
-     * @param id
-     * @param model
-     * @return day page
-     */
-    @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
-    public String DayPage(@PathVariable("id") int id, Model model){
-        User principal = this.getPrincipalUser();
-        model.addAttribute("day", dayService.getDayById(id));
-
-        if(this.notAuthorized(id, "day")){return "errors/403";}
-
-        for(Role role: principal.getRoles()){
-            if(new String(role.getRole()).equals("ROLE_OWNER")){
-                model.addAttribute("userDays", userDayService.listUserDays(id));
-                return "owner-day-manager";
-            }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
-                model.addAttribute("member", true);
-                model.addAttribute("userDay", userDayService.findUserDay(principal.getId(), id));
-                return "member-day-manager";
-            }
-        }
-        return "login";
-    }
-
     /**
      * Allows owner to create a new period if the same respects the validations
-     * @param model
+     * @param redirectAttributes
      * @return updated calendar-admin page
      */
     @RequestMapping(value = "/period/add", method = RequestMethod.POST)
-    public String addNewPeriod(Model model, PeriodDTO period){
+    public RedirectView addNewPeriod(RedirectAttributes redirectAttributes, PeriodDTO period){
         try{
             period.setTeam(this.getPrincipalUser().getTeam());
             Period new_period = periodService.addPeriod(period);
             createDaysFromPeriod(new_period);
-            model.addAttribute("periods", periodService.listPeriods(period.getTeam().getId()));
-            model.addAttribute("msg", "Period added successfully!");
+            redirectAttributes.addFlashAttribute("msg", "Period added successfully!");
         }catch (IllegalArgumentException e){
-            model.addAttribute("periods", this.periodService.listPeriods(period.getTeam().getId()));
-            model.addAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-
-        return "calendar-admin";
+        return new RedirectView("/calendar/admin");
     }
 
 
     /**
      * Allows member user to update his disponibility and shift informations from specifc day
-     * @param model
+     * @param redirectAttributes
      * @return member-day-manager page
      */
     @RequestMapping(value = "/userDay/update", method = RequestMethod.POST)
-    public String updateUserDay(Model model, UserDayDTO userDay){
-        model.addAttribute("member", true);
+    public RedirectView updateUserDay(RedirectAttributes redirectAttributes, UserDayDTO userDay){
+        redirectAttributes.addFlashAttribute("member", true);
         try{
-            UserDay updated_userDay = userDayService.updateUserDay(userDay);
-            model.addAttribute("userDay", updated_userDay);
-            model.addAttribute("day", updated_userDay.getDay());
-            model.addAttribute("msg", "Changes Saved!");
+            userDayService.updateUserDay(userDay);
+            redirectAttributes.addFlashAttribute("msg", "Changes Saved!");
         }catch (Exception e){
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("periods", periodService.listPeriods(this.getPrincipalUser().getTeam().getId()));
-            return "memberpage";
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return new RedirectView("/");
         }
-        return "member-day-manager";
+        return new RedirectView("/day/" + this.userDayService.getUserDayById(userDay.getId()).getDay().getId());
     }
 
     /**
      * Allows owners to set day as weekend or holiday
-     * @param model
+     * @param redirectAttributes
      * @return owner-day-manager page
      */
     @RequestMapping(value = "/day/admin/update", method = RequestMethod.POST)
-    public String updateDay(Model model, DayDTO day){
-        if(this.notAuthorized(day.getId(), "day")){return "errors/403";}
+    public RedirectView updateDay(RedirectAttributes redirectAttributes, DayDTO day){
+        if(this.dayService.notAuthorized(day.getId())){return new RedirectView("/403");}
         try{
             dayService.updateDay(day);
-            model.addAttribute("msg", "Changed!");
+            redirectAttributes.addFlashAttribute("msg", "Changed!");
         }catch(Exception e){
-            model.addAttribute("error", e.getMessage());
-
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
-        model.addAttribute("day", this.dayService.getDayById(day.getId()));
-        model.addAttribute("userDays", userDayService.listUserDays(day.getId()));
-        return "owner-day-manager";
+        return new RedirectView("/day/"+day.getId());
     }
 
     /**
@@ -179,43 +113,15 @@ public class CalendarController extends BaseController{
     /**
      * Method responsible for deleting the period. It automatically deletes all days and bounded users from the database.
      * @param id
-     * @param model
+     * @param redirectAttributes
      * @return calendar-admin page
      */
     @RequestMapping("/calendar/delete/{id}")
-    public String removePeriod(@PathVariable("id") int id, Model model){
-        if(this.notAuthorized(id, "period")){return "errors/403";}
-
-        User principal = this.getPrincipalUser();
+    public RedirectView removePeriod(@PathVariable("id") int id, RedirectAttributes redirectAttributes){
+        if(this.periodService.notAuthorized(id)){return new RedirectView("/403");}
         periodService.removePeriod(id);
-        model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
-        model.addAttribute("msg", "Period removed successfully!");
-        return "calendar-admin";
+        redirectAttributes.addFlashAttribute("msg", "Period removed successfully!");
+        return new RedirectView("/calendar/admin");
     }
 
-    /**
-     * Verify if user has authorization to execute action
-     * @param id
-     * @param type
-     * @return boolean
-     */
-    public Boolean notAuthorized(int id, String type) {
-        User principal = this.getPrincipalUser();
-
-        if(type.equals("day")){
-            Day day = this.dayService.getDayById(id);
-            if (principal.getTeam().getId() != day.getPeriod().getTeam().getId()) {
-                return true;
-            }
-        }
-
-        if(type.equals("period")){
-            Period period = this.periodService.getPeriodById(id);
-            if (principal.getTeam().getId() != period.getTeam().getId()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

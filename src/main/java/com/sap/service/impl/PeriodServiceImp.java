@@ -3,7 +3,10 @@ package com.sap.service.impl;
 import com.sap.dao.PeriodDao;
 import com.sap.dto.PeriodDTO;
 import com.sap.models.Period;
+import com.sap.models.User;
 import com.sap.service.PeriodService;
+import com.sap.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
@@ -13,6 +16,8 @@ public class PeriodServiceImp  implements PeriodService {
 
     @Resource
     private PeriodDao periodDao;
+    @Resource
+    private UserService userService;
 
     @Override
     public Period addPeriod(PeriodDTO period){
@@ -79,6 +84,19 @@ public class PeriodServiceImp  implements PeriodService {
             }
         }
         return true;
+    }
+
+     /** Verify if user has authorization to execute action
+     * @param id
+     * @return boolean
+     */
+    public Boolean notAuthorized(int id) {
+        User principal = this.userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        Period period = this.getPeriodById(id);
+        if (principal.getTeam().getId() != period.getTeam().getId()) {
+            return true;
+        }
+        return false;
     }
 
 }
