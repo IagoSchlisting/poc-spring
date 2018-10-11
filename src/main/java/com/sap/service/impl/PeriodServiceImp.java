@@ -59,6 +59,12 @@ public class PeriodServiceImp  implements PeriodService {
         Period new_period = new Period();
         new_period.setStart(LocalDate.parse(period.getStartDate()));
         new_period.setEnd(LocalDate.parse(period.getEndDate()));
+
+        new_period.setNumberDayNormal(period.getNumberDayNormal());
+        new_period.setNumberDaySpecial(period.getNumberDaySpecial());
+        new_period.setNumberLateNormal(period.getNumberLateNormal());
+        new_period.setNumberLateSpecial(period.getNumberLateSpecial());
+
         new_period.setTeam(period.getTeam());
         return new_period;
     }

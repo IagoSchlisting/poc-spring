@@ -13,6 +13,7 @@
         <intercept-url pattern="/user/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/period/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/calendar/admin/**" access="hasRole('ROLE_OWNER')" />
+        <intercept-url pattern="/calendar/configure" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/day/admin/**" access="hasRole('ROLE_OWNER')" />
 
         <intercept-url pattern="/calendar/manage/**" access="permitAll" />

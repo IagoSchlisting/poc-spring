@@ -26,4 +26,9 @@ public class TeamServiceImp implements TeamService {
         return this.teamDao.getTeamById(id);
     }
 
+    @Override
+    public void removeTeam(Team team){
+        this.teamDao.removeTeam(team);
+    }
+
 }

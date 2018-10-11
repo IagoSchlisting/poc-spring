@@ -163,6 +163,13 @@ public class PageController extends CommonController {
         return "login";
     }
 
+    @RequestMapping(value = "/calendar/configure/{id}", method = RequestMethod.GET)
+    public String CalendarConfigurePage(@PathVariable("id") int id, Model model){
+        if(this.periodService.notAuthorized(id)){return "errors/403";}
+        model.addAttribute("days", this.dayService.listDays(id));
+        return "calendar-configure";
+    }
+
 
     /**
      * Redirects to 403 page

@@ -64,6 +64,12 @@ public class UserController extends CommonController {
             throw new IllegalArgumentException("Username already exists!");
         }
 
+        for(Team t: this.teamService.listTeams()){
+            if(t.getName().equals(username + "'s team")){
+                return t;
+            }
+        }
+
         team.setName(username + "'s team");
         teamService.addTeam(team);
         return team;

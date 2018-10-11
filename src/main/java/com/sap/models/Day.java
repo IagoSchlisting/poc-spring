@@ -22,6 +22,9 @@ public class Day {
     // Weekends Or Holidays
     private Boolean special;
 
+    private Integer numberDay;
+    private Integer numberLate;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERIOD_ID")
     private Period period;
@@ -68,5 +71,21 @@ public class Day {
 
     public void setMemberdays(List<UserDay> memberdays) {
         this.memberdays = memberdays;
+    }
+
+    public Integer getNumberDay() {
+        return numberDay;
+    }
+
+    public void setNumberDay(Integer numberDay) {
+        this.numberDay = numberDay;
+    }
+
+    public Integer getNumberLate() {
+        return numberLate;
+    }
+
+    public void setNumberLate(Integer numberLate) {
+        this.numberLate = numberLate;
     }
 }

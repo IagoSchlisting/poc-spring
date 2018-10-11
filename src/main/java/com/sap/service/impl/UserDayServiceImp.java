@@ -28,15 +28,17 @@ public class UserDayServiceImp implements UserDayService {
         switch (userDay.getShift()){
             case "day":
                 updated_userDay.setShift(Shift.DAY);
+                //updated_userDay.setAny(false);
                 break;
             case "late":
                 updated_userDay.setShift(Shift.LATE);
+                //updated_userDay.setAny(false);
                 break;
             default:
                 updated_userDay.setShift(Shift.ANY);
+                //updated_userDay.setAny(true);
                 break;
         }
-
         updated_userDay.setDisponibility(userDay.getDisponibility());
         this.userDayDao.updateUserDay(updated_userDay);
         return updated_userDay;

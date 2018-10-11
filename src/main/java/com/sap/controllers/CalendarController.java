@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -92,6 +93,8 @@ public class CalendarController extends CommonController {
             day = new Day();
             day.setPeriod(period);
             day.setDay(counter);
+            day.setNumberDay(period.getNumberDayNormal());
+            day.setNumberLate(period.getNumberLateNormal());
             day.setSpecial(false);
             dayService.addDay(day);
             boundUsersToTheDate(day);
@@ -122,6 +125,27 @@ public class CalendarController extends CommonController {
         periodService.removePeriod(id);
         redirectAttributes.addFlashAttribute("msg", "Period removed successfully!");
         return new RedirectView("/calendar/admin");
+    }
+
+    @RequestMapping(value = "/calendar/configure", method = RequestMethod.POST)
+    public RedirectView configurePeriod(WebRequest request, RedirectAttributes redirectAttributes){
+        try{
+            int periodId = Integer.parseInt(request.getParameter("period_id"));
+            for(Day day : this.dayService.listDays(periodId)){
+                Boolean special = request.getParameter("special-"+day.getId()).equals("1")? true : false;
+                int requiredLate  = Integer.parseInt(request.getParameter("late-"+day.getId()));
+                int requiredDay  = Integer.parseInt(request.getParameter("day-"+day.getId()));
+                day.setSpecial(special);
+                day.setNumberLate(requiredLate);
+                day.setNumberDay(requiredDay);
+                this.dayService.updateDay(day);
+            }
+
+            redirectAttributes.addFlashAttribute("msg", "Configuration saved!");
+        }catch (IllegalArgumentException e){
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return new RedirectView("/calendar/configure/" + request.getParameter("period_id"));
     }
 
 }

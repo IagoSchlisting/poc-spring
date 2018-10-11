@@ -25,6 +25,8 @@ public class UserDay {
     @Enumerated(EnumType.ORDINAL)
     private Shift shift;
 
+    //private Boolean any;
+
     @Column(columnDefinition = "Boolean default true")
     private Boolean disponibility;
 
@@ -67,4 +69,5 @@ public class UserDay {
     public void setDisponibility(Boolean disponibility) {
         this.disponibility = disponibility;
     }
+
 }

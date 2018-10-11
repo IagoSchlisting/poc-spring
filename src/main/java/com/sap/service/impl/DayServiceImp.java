@@ -36,6 +36,11 @@ public class DayServiceImp  implements DayService {
         this.dayDao.updateDay(updatedDay);
     }
 
+    @Override
+    public void updateDay(Day day){
+        this.dayDao.updateDay(day);
+    }
+
      /**
      * Verify if user has authorization to execute action
      * @param id

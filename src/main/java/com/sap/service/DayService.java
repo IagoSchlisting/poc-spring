@@ -10,5 +10,6 @@ public interface DayService {
     public List<Day> listDays(int period_id);
     public Day getDayById(int id);
     public void updateDay(DayDTO day);
+    public void updateDay(Day day);
     public Boolean notAuthorized(int id);
 }

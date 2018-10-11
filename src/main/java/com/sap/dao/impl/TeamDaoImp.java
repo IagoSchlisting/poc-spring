@@ -23,4 +23,9 @@ public class TeamDaoImp extends HibernateDaoSupport implements TeamDao {
     public Team getTeamById(int id){
         return getHibernateTemplate().get(Team.class, id);
     }
+
+    @Override
+    public void removeTeam(Team team){
+        this.getHibernateTemplate().delete(team);
+    }
 }

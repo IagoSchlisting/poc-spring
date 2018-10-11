@@ -36,14 +36,6 @@ public class User {
     @JoinColumn(name = "TEAM_ID")
     private Team team;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "MEMBER_DAY",
-//            joinColumns = { @JoinColumn(name = "USER_ID") },
-//            inverseJoinColumns = { @JoinColumn(name = "DAY_ID") }
-//    )
-//    private List<DayPeriod> days;
-
     @OneToMany(mappedBy = "user")
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<UserDay> userDays;

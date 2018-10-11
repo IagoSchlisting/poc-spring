@@ -43,6 +43,7 @@ public class CommonController {
         userDay.setDay(day);
         userDay.setUser(user);
         userDay.setShift(Shift.ANY);
+        //userDay.setAny(true);
         userDay.setDisponibility(true);
         this.userDayService.addUserDay(userDay);
     }
