@@ -49,7 +49,7 @@ public class UserDayServiceImp implements UserDayService {
                 updated_userDay.setAnyShift(false);
                 break;
             default:
-                updated_userDay.setShift(Shift.ANY);
+                updated_userDay.setShift(Shift.DAY);
                 updated_userDay.setAnyShift(true);
                 break;
         }
