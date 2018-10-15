@@ -6,7 +6,7 @@
     </div>
     <div class="panel-body">
         <%@ include file="templates/messages.jsp"%>
-        <form action="/userDay/update" method="post">
+        <form id="form" action="/userDay/update" method="post">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
             <input type="hidden" name="id" id="id" value="${userDay.id}"/>
             <c:if test="${userDay.day.special}">
@@ -34,3 +34,24 @@
 </div>
 
 <%@ include file="templates/footer.jsp"%>
+
+<script>
+
+    $("#disponibility").change(function () {
+        var selected = $(this).val();
+        if(selected == "0"){
+            $("#shift").prop('disabled', 'disabled');
+            $("#shift").append('<option value="none" selected="selected">None</option>');
+        }else{
+            $("#shift").prop('disabled', false);
+            $("#shift option[value='none']").remove();
+
+        }
+    });
+
+    <c:if test="${not userDay.disponibility}">
+        $("#shift").append('<option value="none" selected="selected">None</option>');
+        $("#shift").prop('disabled', 'disabled');
+    </c:if>
+
+</script>

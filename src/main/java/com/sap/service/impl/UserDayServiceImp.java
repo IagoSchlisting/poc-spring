@@ -29,6 +29,11 @@ public class UserDayServiceImp implements UserDayService {
 
     @Override
     public UserDay updateUserDay(UserDayDTO userDay){
+
+        if(!userDay.getDisponibility()){
+            userDay.setShift("none");
+        }
+
         UserDay updated_userDay = this.getUserDayById(userDay.getId());
         switch (userDay.getShift()){
             case "day":
@@ -37,6 +42,10 @@ public class UserDayServiceImp implements UserDayService {
                 break;
             case "late":
                 updated_userDay.setShift(Shift.LATE);
+                updated_userDay.setAnyShift(false);
+                break;
+            case "none":
+                updated_userDay.setShift(Shift.NONE);
                 updated_userDay.setAnyShift(false);
                 break;
             default:

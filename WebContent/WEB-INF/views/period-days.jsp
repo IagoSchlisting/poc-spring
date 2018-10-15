@@ -36,7 +36,7 @@
                 </a>
             </c:forEach>
             <div class="col-md-12" style="margin-top:15px">
-                <a href="/calendar/admin" class="btn btn-danger back"> Back </a>
+                <a href="${member ? '/' : '/calendar/admin'}" class="btn btn-danger back"> Back </a>
             </div>
         </div>
     </div>

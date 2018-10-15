@@ -41,6 +41,20 @@ public class DayServiceImp  implements DayService {
         if(day.getNumberDay() < 0 || day.getNumberLate() < 0){
             throw new IllegalArgumentException("Not possible to update day with negative param values!");
         }
+
+        //REFACTORING NEEDED AFTER
+        User principal = this.userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        int totalMembers = this.userService.listUsers(day.getPeriod().getTeam().getId(), principal.getId()).size();
+
+        if(!day.getSpecial()){
+            if(totalMembers != day.getNumberDay() + day.getNumberLate()){
+                throw  new IllegalArgumentException("Number of members per shift must correspond to the following equation: DAY + LATE = (total members)");
+            }
+        }else{
+            if(day.getNumberDay() + day.getNumberLate() > totalMembers){
+                throw  new IllegalArgumentException("Sum of total members required for shift cannot be higher than the number of total members.");
+            }
+        }
         this.dayDao.updateDay(day);
     }
 

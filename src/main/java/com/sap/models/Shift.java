@@ -1,5 +1,5 @@
 package com.sap.models;
 
 public enum Shift {
-    LATE, DAY, ANY
+    LATE, DAY, ANY, NONE
 }
