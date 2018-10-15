@@ -38,6 +38,9 @@ public class DayServiceImp  implements DayService {
 
     @Override
     public void updateDay(Day day){
+        if(day.getNumberDay() < 0 || day.getNumberLate() < 0){
+            throw new IllegalArgumentException("Not possible to update day with negative param values!");
+        }
         this.dayDao.updateDay(day);
     }
 

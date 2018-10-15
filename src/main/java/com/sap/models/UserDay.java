@@ -25,10 +25,10 @@ public class UserDay {
     @Enumerated(EnumType.ORDINAL)
     private Shift shift;
 
-    //private Boolean any;
-
     @Column(columnDefinition = "Boolean default true")
     private Boolean disponibility;
+
+    private Boolean anyShift;
 
     public Integer getId() {
         return id;
@@ -70,4 +70,11 @@ public class UserDay {
         this.disponibility = disponibility;
     }
 
+    public Boolean getAnyShift() {
+        return anyShift;
+    }
+
+    public void setAnyShift(Boolean anyShift) {
+        this.anyShift = anyShift;
+    }
 }

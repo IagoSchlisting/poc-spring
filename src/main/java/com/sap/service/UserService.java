@@ -11,7 +11,9 @@ public interface UserService {
     public void updateUser(UserDTO user);
     public void updateUserPass(PassDTO pass);
     public User getUserByName(String name);
+
     public List<User> listUsers(int team_id, int user_id);
+
     public User getUserById(int id);
     public void removeUser(int id);
     public Boolean notAuthorized(int id);

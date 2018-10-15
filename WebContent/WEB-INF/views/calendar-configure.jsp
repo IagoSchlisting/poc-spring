@@ -27,8 +27,8 @@
                         <option value="1" ${day.special ? 'selected' : ''}> Weekend or Holiday </option>
                     </select>
                 </td>
-                <td width="150"> <input type="number" name="late-${day.id}" id="late-${day.id}" value="${day.numberDay}" class="form-control"> </td>
-                <td width="150"> <input type="number" name="day-${day.id}" id="day-${day.id}" value="${day.numberLate}" class="form-control"> </td>
+                <td width="150"> <input type="number" name="late-${day.id}" id="late-${day.id}" value="${day.numberLate}" class="form-control"> </td>
+                <td width="150"> <input type="number" name="day-${day.id}" id="day-${day.id}" value="${day.numberDay}" class="form-control"> </td>
             </tr>
         </c:forEach>
             <tr>

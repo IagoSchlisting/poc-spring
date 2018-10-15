@@ -25,11 +25,12 @@ public class Day {
     private Integer numberDay;
     private Integer numberLate;
 
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERIOD_ID")
     private Period period;
 
-    @OneToMany(mappedBy = "day")
+    @OneToMany(mappedBy = "day", fetch = FetchType.EAGER)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<UserDay> memberdays;
 

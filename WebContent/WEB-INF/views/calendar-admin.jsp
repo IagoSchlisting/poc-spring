@@ -8,24 +8,26 @@
         <%@ include file="templates/messages.jsp"%>
         <table class="table table-stripped">
             <tr>
-                <th> ID </th>
-                <th> Start Date </th>
-                <th> End Date </th>
-                <th> NN Day </th>
-                <th> NN Late </th>
-                <th> NS Day </th>
-                <th> NS Late </th>
-                <th>  </th>
+                <th width="60"> ID </th>
+                <th width="200"> Start Date </th>
+                <th width="200"> End Date </th>
+                <th width="230"> Normal Days </th>
+                <th width="230"> Weekend or Holidays </th>
+                <th> Actions  </th>
             <tr>
                 <c:forEach var="period" items="${periods}">
             <tr>
                 <td> ${period.id} </td>
                 <td> ${period.start}</td>
                 <td> ${period.end}</td>
-                <td> ${period.numberDayNormal} </td>
-                <td> ${period.numberLateNormal} </td>
-                <td> ${period.numberDaySpecial} </td>
-                <td> ${period.numberLateSpecial} </td>
+                <td class="success">
+                    <span class="status DAY"> ${period.numberDayNormal}</span>
+                    <span class="status LATE"> ${period.numberLateNormal} </span>
+                </td>
+                <td class="danger">
+                    <span class="status DAY"> ${period.numberDaySpecial} </span>
+                    <span class="status LATE" style="margin-left: 2px"> ${period.numberLateSpecial} </span>
+                </td>
                 <td>
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Actions
@@ -56,57 +58,55 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" style="min-height: 300px">
-
-                        <form action="/period/add" method="post">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="startDate">Start Date</label>
-                                    <input type="date" class="form-control" id="startDate" name="startDate">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="endDate">End Date</label>
-                                    <input type="date" class="form-control" id="endDate" name="endDate">
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px">
-                                    <div style="background-color: #383c92; padding: 2px 0px 0px 10px; border-radius: 5px; margin-bottom: 10px"><label style="color: white"> Normal Days requires </label></div>
+                    <form action="/period/add" method="post">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                        <div class="modal-body" style="min-height: 300px">
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="numberDayNormal">For day shifts</label>
-                                        <input type="number" class="form-control" id="numberDayNormal" name="numberDayNormal">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="numberLateNormal">For late shifts</label>
-                                        <input type="number" class="form-control" id="numberLateNormal" name="numberLateNormal">
+                                        <label for="startDate">Start Date</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px">
-                                    <div style="background-color: #b74a55; padding: 2px 0px 0px 10px; border-radius: 5px; margin-bottom: 10px"><label style="color: white"> Special Days requires </label></div>
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="numberDaySpecial">For day shifts</label>
-                                        <input type="number" class="form-control" id="numberDaySpecial" name="numberDaySpecial">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="numberLateSpecial">For late shifts</label>
-                                        <input type="number" class="form-control" id="numberLateSpecial" name="numberLateSpecial">
+                                        <label for="endDate">End Date</label>
+                                        <input type="date" class="form-control" id="endDate" name="endDate">
                                     </div>
                                 </div>
-                            </div>
 
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Period</button>
-                        </form>
-                    </div>
+                                <div class="col-md-6">
+                                    <div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px">
+                                        <div style="background-color: #383c92; padding: 2px 0px 0px 10px; border-radius: 5px; margin-bottom: 10px"><label style="color: white"> Normal Days requires </label></div>
+                                        <div class="form-group">
+                                            <label for="numberDayNormal">For day shifts</label>
+                                            <input type="number" class="form-control" id="numberDayNormal" name="numberDayNormal" required="required">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="numberLateNormal">For late shifts</label>
+                                            <input type="number" class="form-control" id="numberLateNormal" name="numberLateNormal"required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div style="padding: 5px; border: 1px solid #ccc; border-radius: 5px">
+                                        <div style="background-color: #b74a55; padding: 2px 0px 0px 10px; border-radius: 5px; margin-bottom: 10px"><label style="color: white"> Special Days requires </label></div>
+                                        <div class="form-group">
+                                            <label for="numberDaySpecial">For day shifts</label>
+                                            <input type="number" class="form-control" id="numberDaySpecial" name="numberDaySpecial" required="required">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="numberLateSpecial">For late shifts</label>
+                                            <input type="number" class="form-control" id="numberLateSpecial" name="numberLateSpecial" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Period</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

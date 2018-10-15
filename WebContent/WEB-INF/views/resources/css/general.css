@@ -23,12 +23,20 @@
     font-size: medium;
 }
 
-.status{
+.status {
     padding: 4px 18px 4px 18px;
     border-radius: 2px;
     color: white;
     font-size: medium;
 }
+
+.box{
+    padding: 2px 10px 2px 10px;
+    border-radius: 2px;
+    color: white;
+    font-size: small;
+}
+
 .true{ background-color: #64a664}
 .false{ background-color: #e25959 }
 .LATE{background-color: #554f68}
@@ -44,3 +52,5 @@
 }
 
 .m-top{margin-top: 20px;}
+
+.special{background-color: #d51b2e14;}

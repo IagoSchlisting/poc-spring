@@ -2,7 +2,9 @@ package com.sap.service.impl;
 import com.sap.dao.UserDao;
 import com.sap.dto.PassDTO;
 import com.sap.dto.UserDTO;
+import com.sap.models.UserDay;
 import com.sap.service.TeamService;
+import com.sap.service.UserDayService;
 import com.sap.service.UserService;
 import com.sap.models.User;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,8 @@ public class UserServiceImp implements UserService {
     private UserDao userDao;
     @Resource
     private TeamService teamService;
+    @Resource
+    private UserDayService userDayService;
 
     @Override
     public User addUser(UserDTO user) {
@@ -85,6 +89,12 @@ public class UserServiceImp implements UserService {
 
     @Override
     public void removeUser(int id) {
+
+        //Remove UserDays from user before
+        List<UserDay> userDays = this.userDayService.listUserDaysByUser(id);
+        for(UserDay userDay : userDays){
+            this.userDayService.removeUserDay(userDay);
+        }
         this.userDao.removeUser(id);
     }
 

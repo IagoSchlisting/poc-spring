@@ -124,7 +124,7 @@ public class UserController extends CommonController {
             user.setPassword("password");
             user.setConfirmPassword("password");
             User new_user = this.userService.addUser(user);
-            this.boundNewUserToPeriods(new_user);
+            //this.boundNewUserToPeriods(new_user);
             redirectAttributes.addFlashAttribute("msg", "New member registered successfully!");
         }
         catch (IllegalArgumentException e){
@@ -133,23 +133,23 @@ public class UserController extends CommonController {
         return new RedirectView("/user/add");
     }
 
-    /**
-     * Responsible for bounding new created users to all periods created by the owner
-     * @param user
-     */
-    private void boundNewUserToPeriods(User user){
-        List<Period> periods = this.periodService.listPeriods(user.getTeam().getId());
-        List<Day> days;
-
-        for(Period period : periods){
-            days = this.dayService.listDays(period.getId());
-            for(Day day: days){
-                if(!day.getDay().isBefore(LocalDate.now())){
-                    this.createUserDay(user, day);
-                }
-            }
-        }
-    }
+//    /**
+//     * Responsible for bounding new created users to all periods created by the owner
+//     * @param user
+//     */
+//    private void boundNewUserToPeriods(User user){
+//        List<Period> periods = this.periodService.listPeriods(user.getTeam().getId());
+//        List<Day> days;
+//
+//        for(Period period : periods){
+//            days = this.dayService.listDays(period.getId());
+//            for(Day day: days){
+//                if(!day.getDay().isBefore(LocalDate.now())){
+//                    this.createUserDay(user, day);
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Responsible for edit member type users

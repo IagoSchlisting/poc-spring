@@ -5,6 +5,7 @@ import com.sap.dto.PeriodDTO;
 import com.sap.models.Period;
 import com.sap.models.User;
 import com.sap.service.PeriodService;
+import com.sap.service.TeamService;
 import com.sap.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -25,6 +26,21 @@ public class PeriodServiceImp  implements PeriodService {
         List<Period> periods = this.listPeriods(period.getTeam().getId());
         LocalDate start = LocalDate.parse(period.getStartDate());
         LocalDate end = LocalDate.parse(period.getEndDate());
+
+        if(period.getNumberDayNormal() < 0 || period.getNumberDaySpecial() < 0 || period.getNumberLateNormal() < 0 || period.getNumberLateSpecial() < 0){
+            throw  new IllegalArgumentException("Not possible to create period with negative param values!");
+        }
+        //REFACTORING NEEDED AFTER
+        User principal = this.userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
+        int totalMembers = this.userService.listUsers(period.getTeam().getId(), principal.getId()).size();
+
+        if(totalMembers != period.getNumberDayNormal() + period.getNumberLateNormal()){
+            throw  new IllegalArgumentException("Number of members per shift must correspond to the following equation: DAY + LATE = (total members)");
+        }
+
+        if(period.getNumberLateSpecial() + period.getNumberDaySpecial() > totalMembers){
+            throw  new IllegalArgumentException("Sum of total members required for shift cannot be higher than the number of total members.");
+        }
 
         if(!validatePeriods(periods, start, end)){
             throw  new IllegalArgumentException("Not possible to create a period between this dates, check the corresponding values!");

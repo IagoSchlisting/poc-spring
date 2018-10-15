@@ -6,6 +6,7 @@ import com.sap.models.UserDay;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.constraints.AssertTrue;
 import java.util.List;
 
 public class UserDayDaoImp extends HibernateDaoSupport implements UserDayDao {
@@ -19,6 +20,17 @@ public class UserDayDaoImp extends HibernateDaoSupport implements UserDayDao {
     public List<UserDay> listUserDays(int day_id){
         return (List<UserDay>) this.getHibernateTemplate().find("from com.sap.models.UserDay where DAY_ID = " + day_id);
     }
+
+    public List<UserDay> listUserDaysByUser(int user_id){
+        return (List<UserDay>) this.getHibernateTemplate().find("from com.sap.models.UserDay where USER_ID = " + user_id);
+    }
+
+    @Override
+    @Transactional
+    public void removeUserDay(UserDay userDay){
+        this.getHibernateTemplate().delete(userDay);
+    }
+
     @Override
     @Transactional
     public void updateUserDay(UserDay userDay){
