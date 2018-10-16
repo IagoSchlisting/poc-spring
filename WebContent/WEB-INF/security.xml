@@ -15,6 +15,7 @@
         <intercept-url pattern="/calendar/admin/**" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/calendar/configure" access="hasRole('ROLE_OWNER')" />
         <intercept-url pattern="/day/admin/**" access="hasRole('ROLE_OWNER')" />
+        <intercept-url pattern="/notification/**" access="hasRole('ROLE_OWNER')" />
 
         <intercept-url pattern="/calendar/manage/**" access="permitAll" />
         <intercept-url pattern="/login" access="permitAll" />

@@ -27,6 +27,10 @@ public class Team {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<Period> periods;
 
+    @OneToMany(mappedBy = "team")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    private List<Notification> notifications;
+
     public Integer getId() {
         return id;
     }
@@ -50,5 +54,6 @@ public class Team {
     public void setUsers(List<User> users) {
         this.users = users;
     }
+
 
 }

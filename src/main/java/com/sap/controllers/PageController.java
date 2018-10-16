@@ -2,6 +2,7 @@ package com.sap.controllers;
 
 import com.sap.models.Team;
 import com.sap.service.DayService;
+import com.sap.service.NotificationService;
 import com.sap.service.PeriodService;
 import com.sap.models.Role;
 import com.sap.models.User;
@@ -26,6 +27,8 @@ public class PageController extends CommonController {
     private TeamService teamService;
     @Resource
     private DayService dayService;
+    @Resource
+    private NotificationService notificationService;
 
 
 
@@ -168,6 +171,13 @@ public class PageController extends CommonController {
         if(this.periodService.notAuthorized(id)){return "errors/403";}
         model.addAttribute("days", this.dayService.listDays(id));
         return "calendar-configure";
+    }
+
+    @RequestMapping(value = "/notification", method = RequestMethod.GET)
+    public  String NotificationsPage(Model model){
+        int team_id  = this.getPrincipalUser().getTeam().getId();
+        model.addAttribute("notifications", this.notificationService.listNotifications(team_id));
+        return "notification";
     }
 
 

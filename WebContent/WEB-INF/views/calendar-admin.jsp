@@ -6,7 +6,7 @@
     </div>
     <div class="panel-body">
         <%@ include file="templates/messages.jsp"%>
-        <table class="table table-stripped">
+        <table class="table table-striped">
             <tr>
                 <th width="60"> ID </th>
                 <th width="200"> Start Date </th>

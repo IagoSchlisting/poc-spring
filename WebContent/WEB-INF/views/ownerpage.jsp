@@ -3,7 +3,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"> ${principal.team.name} </div>
         <div class="panel-body">
-            <table class="table table-stripped">
+            <table class="table table-striped">
                 <tr>
                     <th> ID </th>
                     <th> Member Name </th>

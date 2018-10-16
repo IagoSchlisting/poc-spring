@@ -37,6 +37,7 @@
             <li><a href="/">Home</a></li>
             <c:if test="${not member}">
                 <li><a href="/calendar/admin"> Work Calendar </a></li>
+                <li><a href="/notification"> Notifications </a></li>
             </c:if>
         </ul>
 

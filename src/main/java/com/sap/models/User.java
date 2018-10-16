@@ -40,6 +40,10 @@ public class User {
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
     private List<UserDay> userDays;
 
+    @OneToMany(mappedBy = "user")
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+    private List<UserNotification> userNotifications;
+
     public Team getTeam() {
         return team;
     }
@@ -94,5 +98,13 @@ public class User {
 
     public void setUserDays(List<UserDay> userDays) {
         this.userDays = userDays;
+    }
+
+    public List<UserNotification> getUserNotifications() {
+        return userNotifications;
+    }
+
+    public void setUserNotifications(List<UserNotification> userNotifications) {
+        this.userNotifications = userNotifications;
     }
 }

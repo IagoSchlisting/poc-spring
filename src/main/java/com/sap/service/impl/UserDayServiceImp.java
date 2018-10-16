@@ -18,8 +18,6 @@ public class UserDayServiceImp implements UserDayService {
 
     @Resource
     private UserDayDao userDayDao;
-    @Resource
-    private UserService userService;
 
     @Override
     public void addUserDay(UserDay userDay){
@@ -36,6 +34,8 @@ public class UserDayServiceImp implements UserDayService {
     @Override
     public UserDay updateUserDay(UserDayDTO userDay){
 
+        String error = "Not possible to bound user to the shift, number required already fulfilled.";
+
         if(!userDay.getDisponibility()){
             userDay.setShift("none");
         }
@@ -47,7 +47,7 @@ public class UserDayServiceImp implements UserDayService {
                     updated_userDay.setShift(Shift.DAY);
                     updated_userDay.setAnyShift(false);
                 }else{
-                    throw new IllegalArgumentException("Not possible to bound user to the shift, number required already fulfilled.");
+                    throw new IllegalArgumentException(error);
                 }
                 break;
             case "late":
@@ -55,7 +55,7 @@ public class UserDayServiceImp implements UserDayService {
                     updated_userDay.setShift(Shift.LATE);
                     updated_userDay.setAnyShift(false);
                 }else{
-                    throw new IllegalArgumentException("Not possible to bound user to the shift, number required already fulfilled.");
+                    throw new IllegalArgumentException(error);
                 }
                 break;
             case "none":
@@ -71,6 +71,7 @@ public class UserDayServiceImp implements UserDayService {
         this.userDayDao.updateUserDay(updated_userDay);
         return updated_userDay;
     }
+
     @Override
     public UserDay getUserDayById(int id){
         return this.userDayDao.getUserDayById(id);
@@ -98,7 +99,6 @@ public class UserDayServiceImp implements UserDayService {
         }
         return false;
     }
-
 
     private Integer availableOnDay(Day day){
         int requireDay = day.getNumberDay();
