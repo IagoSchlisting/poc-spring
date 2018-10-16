@@ -27,6 +27,11 @@ public class UserDaoImp extends HibernateDaoSupport implements UserDao {
     }
 
     @Override
+    public List<User> listUsers(int team_id) {
+        return (List<User>) getHibernateTemplate().find("from com.sap.models.User where TEAM_ID = " + team_id);
+    }
+
+    @Override
     public User getUserById(int id) {
         User user = getHibernateTemplate().get(User.class, id);
         return user;

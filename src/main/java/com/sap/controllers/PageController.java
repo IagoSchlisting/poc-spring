@@ -1,12 +1,7 @@
 package com.sap.controllers;
 
-import com.sap.models.Team;
-import com.sap.service.DayService;
-import com.sap.service.NotificationService;
-import com.sap.service.PeriodService;
-import com.sap.models.Role;
-import com.sap.models.User;
-import com.sap.service.TeamService;
+import com.sap.models.*;
+import com.sap.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +24,8 @@ public class PageController extends CommonController {
     private DayService dayService;
     @Resource
     private NotificationService notificationService;
+    @Resource
+    private UserNotificationService userNotificationService;
 
 
 
@@ -64,6 +61,8 @@ public class PageController extends CommonController {
 
         User principal = this.getPrincipalUser();
         model.addAttribute("principal", principal);
+        List<Notification> notifications = this.notificationService.listNotifications(principal.getTeam().getId());
+        model.addAttribute("notifications", notifications);
 
         for (Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
@@ -75,6 +74,7 @@ public class PageController extends CommonController {
                 return "memberpage";
             }
         }
+
         return "login";
     }
 

@@ -83,6 +83,11 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public List<User> listUsers(int team_id) {
+        return this.userDao.listUsers(team_id);
+    }
+
+    @Override
     public User getUserById(int id) {
         return this.userDao.getUserById(id);
     }

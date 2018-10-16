@@ -58,3 +58,7 @@
 </nav>
 
 <div class="container">
+
+<c:forEach var="notification" items="${notifications}">
+    <div class="alert alert-warning"> ${notification.msg} </div>
+</c:forEach>

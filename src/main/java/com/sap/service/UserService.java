@@ -13,6 +13,8 @@ public interface UserService {
     public User getUserByName(String name);
 
     public List<User> listUsers(int team_id, int user_id);
+    public List<User> listUsers(int team_id);
+
 
     public User getUserById(int id);
     public void removeUser(int id);
