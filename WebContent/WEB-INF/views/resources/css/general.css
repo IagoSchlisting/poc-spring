@@ -42,6 +42,7 @@
 .LATE{background-color: #554f68}
 .DAY{background-color: #e7d052}
 .ANY{background-color: #5095cd}
+.NONE{background-color: #ccc}
 
 .form-check-label{
     font-weight: normal;

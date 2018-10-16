@@ -1,6 +1,8 @@
 package com.sap.service;
 
 import com.sap.dto.UserDayDTO;
+import com.sap.models.Day;
+import com.sap.models.Shift;
 import com.sap.models.UserDay;
 
 import java.util.List;
@@ -11,6 +13,7 @@ public interface UserDayService {
     public List<UserDay> listUserDays(int day_id);
     public List<UserDay> listUserDaysByUser(int user_id);
 
+    public Shift getNeededShift(Day day);
     public UserDay updateUserDay(UserDayDTO userDay);
     public UserDay getUserDayById(int id);
     public UserDay findUserDay(int user_id, int day_id);

@@ -16,7 +16,7 @@
             <tr>
                 <td> ${userDay.user.username} </td>
             <td>
-                <span class="status ${userDay.anyShift ? 'ANY' : userDay.shift}">${userDay.anyShift ? 'ANY' : userDay.shift}</span>
+                <span class="status ${userDay.anyShift ? 'ANY' : userDay.shift}">${userDay.anyShift ? 'ANY / ' : ''}${userDay.shift}</span>
             </td>
                 <td>
                     <span class="status ${userDay.disponibility}">

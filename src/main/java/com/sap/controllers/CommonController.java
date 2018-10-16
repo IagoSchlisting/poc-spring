@@ -44,33 +44,7 @@ public class CommonController {
         UserDay userDay = new UserDay();
         userDay.setDay(day);
         userDay.setUser(user);
-
-        int requireDay = day.getNumberDay();
-        int requireLate = day.getNumberLate();
-        int totalDay = 0;
-        int totalLate = 0;
-
-        List<UserDay> memberDays = this.userDayService.listUserDays(day.getId());
-        for (UserDay memberDay : memberDays) {
-            if (memberDay.getShift() == Shift.DAY) {
-                totalDay++;
-            } else {
-                totalLate++;
-            }
-        }
-
-        // Verifies which shift needs more members
-        if (requireDay - totalDay > requireLate - totalLate) {
-            userDay.setShift(Shift.DAY);
-        } else if (requireDay - totalDay < requireLate - totalLate) {
-            userDay.setShift(Shift.LATE);
-        } else if (requireDay - totalDay == 0 && requireLate - totalLate == 0) {
-            throw new IllegalArgumentException("Not possible to bound user to the day, number required already fulfilled.");
-        } else {
-            userDay.setShift(Shift.DAY);
-        }
-
-        //userDay.setShift(Shift.ANY);
+        userDay.setShift(this.userDayService.getNeededShift(day));
         userDay.setAnyShift(true);
         userDay.setDisponibility(true);
         this.userDayService.addUserDay(userDay);

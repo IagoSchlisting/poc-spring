@@ -23,6 +23,7 @@
                 <select class="form-control" id="shift" name="shift">
                     <option value="day" ${userDay.shift == "DAY" ? 'selected' : ''}> Day </option>
                     <option value="late" ${userDay.shift == "LATE" ? 'selected' : ''}> Late </option>
+                    <option value="any"> Any </option>
                 </select>
             </div>
         <a href="/calendar/manage/${day.period.id}" class="btn btn-danger"> Back </a>
