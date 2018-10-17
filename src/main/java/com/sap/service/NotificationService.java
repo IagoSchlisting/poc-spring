@@ -9,7 +9,7 @@ public interface NotificationService {
     public void addNotification(Notification n);
     public void removeNotification(Notification n);
     public List<Notification> listNotifications(int team_id);
-    public void updateNotification(Notification n);
+    public List<Notification> listNotificationsForUser(int user_id);
     public Notification getNotificationById(int id);
 
 }

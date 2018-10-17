@@ -9,7 +9,7 @@ public interface NotificationDao {
     public void addNotification(Notification n);
     public void removeNotification(Notification n);
     public List<Notification> listNotifications(int team_id);
-    public void updateNotification(Notification n);
     public Notification getNotificationById(int id);
+    public List<Notification> listNotificationsForUser(int user_id);
 
 }

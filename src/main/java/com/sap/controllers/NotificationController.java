@@ -7,13 +7,14 @@ import com.sap.service.NotificationService;
 import com.sap.service.UserNotificationService;
 import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.annotation.Resource;
+import javax.persistence.Id;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -60,6 +61,15 @@ public class NotificationController extends CommonController{
             userNotification.setVisualized(false);
             this.userNotificationService.addUserNotification(userNotification);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/visualize/notification", method = RequestMethod.POST)
+    public void setNotificationAsVisualized(@RequestBody Notification notification){
+        int notification_id = notification.getId();
+        UserNotification userNotification = this.userNotificationService.getUserNotification(notification_id, this.getPrincipalUser().getId());
+        userNotification.setVisualized(true);
+        this.userNotificationService.updateUserNotification(userNotification);
     }
 
 }

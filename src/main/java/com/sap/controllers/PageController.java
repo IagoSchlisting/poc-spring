@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,8 +23,6 @@ public class PageController extends CommonController {
     private DayService dayService;
     @Resource
     private NotificationService notificationService;
-    @Resource
-    private UserNotificationService userNotificationService;
 
 
 
@@ -53,15 +50,16 @@ public class PageController extends CommonController {
     /**
      * Verify if user is from owner or member type and redirects accordingly
      * @param model
-     * @param request
      * @return principal owner's or member's page
      */
     @RequestMapping("/")
-    public String initialPage(Model model, WebRequest request){
+    public String initialPage(Model model){
 
         User principal = this.getPrincipalUser();
         model.addAttribute("principal", principal);
-        List<Notification> notifications = this.notificationService.listNotifications(principal.getTeam().getId());
+        //List<Notification> notifications = this.notificationService.listNotifications(principal.getTeam().getId());
+
+        List<Notification> notifications = this.notificationService.listNotificationsForUser(principal.getId());
         model.addAttribute("notifications", notifications);
 
         for (Role role: principal.getRoles()){

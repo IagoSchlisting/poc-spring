@@ -57,8 +57,18 @@
     </div><!-- /.container-fluid -->
 </nav>
 
+<meta name="${_csrf.parameterName}" content="${_csrf.token}">
 <div class="container">
 
 <c:forEach var="notification" items="${notifications}">
-    <div class="alert alert-warning"> ${notification.msg} </div>
+    <div class="alert alert-warning" role="alert">
+        <span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp; Notification: <strong>${notification.msg}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" data-id="${notification.id}">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
 </c:forEach>
+
+
+
+

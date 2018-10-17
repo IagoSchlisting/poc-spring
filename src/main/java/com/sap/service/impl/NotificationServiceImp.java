@@ -29,13 +29,13 @@ public class NotificationServiceImp implements NotificationService {
     }
 
     @Override
-    public void updateNotification(Notification n){
-        this.notificationDao.updateNotification(n);
+    public Notification getNotificationById(int id){
+        return this.notificationDao.getNotificationById(id);
     }
 
     @Override
-    public Notification getNotificationById(int id){
-        return this.notificationDao.getNotificationById(id);
+    public List<Notification> listNotificationsForUser(int user_id){
+        return this.notificationDao.listNotificationsForUser(user_id);
     }
 
 }
