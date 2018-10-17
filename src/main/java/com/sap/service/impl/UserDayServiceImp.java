@@ -63,7 +63,7 @@ public class UserDayServiceImp implements UserDayService {
                 updated_userDay.setAnyShift(false);
                 break;
             default:
-                updated_userDay.setShift(getNeededShift(updated_userDay.getDay()));
+                updated_userDay.setShift(getNeededShift(updated_userDay.getDay(), false));
                 updated_userDay.setAnyShift(true);
                 break;
         }
@@ -87,15 +87,24 @@ public class UserDayServiceImp implements UserDayService {
 
 
     private Boolean canSelectShift(UserDayDTO userDay, Shift shift){
-        List<UserDay> memberDays = this.listUserDays(this.getUserDayById(userDay.getId()).getDay().getId());
+        Day day = this.getUserDayById(userDay.getId()).getDay();
+        List<UserDay> memberDays = this.listUserDays(day.getId());
+
         for (UserDay memberDay : memberDays) {
+
+            if(shift == Shift.DAY && availableOnDay(day) > 0 || shift == Shift.LATE && availableOnLate(day) > 0){
+                return true;
+            }
+            if(shift == Shift.DAY && day.getNumberDay() == 0 || shift == Shift.LATE && day.getNumberLate() == 0){
+                return false;
+            }
+
             if(memberDay.getShift() == shift && memberDay.getAnyShift()){
                 UserDay updated_memberDay = this.getUserDayById(memberDay.getId());
                 updated_memberDay.setShift(memberDay.getShift() == Shift.DAY ? Shift.LATE : Shift.DAY);
                 this.userDayDao.updateUserDay(updated_memberDay);
                 return true;
             }
-
         }
         return false;
     }
@@ -125,14 +134,18 @@ public class UserDayServiceImp implements UserDayService {
     }
 
     @Override
-    public Shift getNeededShift(Day day){
+    public Shift getNeededShift(Day day, Boolean notification){
         // Verifies which shift needs more members
         if (this.availableOnDay(day) > this.availableOnLate(day)) {
             return Shift.DAY;
         } else if (this.availableOnDay(day) < this.availableOnLate(day)) {
             return Shift.LATE;
         } else if (this.availableOnDay(day) == 0 && this.availableOnLate(day) == 0) {
-            throw new IllegalArgumentException("Not possible to bound user to the day, number required already fulfilled.");
+            if(!notification){
+                throw new IllegalArgumentException("Not possible to bound user to the day, number required already fulfilled.");}
+            else {
+                return Shift.NONE;
+            }
         } else {
             return Shift.DAY;
         }

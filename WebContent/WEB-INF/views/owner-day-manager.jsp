@@ -26,8 +26,18 @@
             </tr>
             </c:forEach>
             <tr>
-                <td colspan="3">
+                <td width="250">
                     <a href="/calendar/manage/${day.period.id}" class="btn btn-danger back m-top"> Back </a>
+                </td>
+                <td colspan="2">
+                    <c:if test="${shift != 'NONE'}">
+                        <form action="/notification/add" method="post">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                            <input type="hidden" name="msg" id="msg" class="form-control"
+                                   value=" Day <span class='variable'> [ ${day.day} ] </span> needs someone in the <span class='variable'> [ ${shift} ] </span> shift, <a href='/day/${day.id}'>click here</a> to help us.">
+                            <button class="btn btn-info m-top"> <span class="glyphicon glyphicon-info-sign"></span>&nbsp;  Active Helper</button>
+                        </form>
+                    </c:if>
                 </td>
             </tr>
         </table>

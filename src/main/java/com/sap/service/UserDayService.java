@@ -13,7 +13,7 @@ public interface UserDayService {
     public List<UserDay> listUserDays(int day_id);
     public List<UserDay> listUserDaysByUser(int user_id);
 
-    public Shift getNeededShift(Day day);
+    public Shift getNeededShift(Day day, Boolean notification);
     public UserDay updateUserDay(UserDayDTO userDay);
     public UserDay getUserDayById(int id);
     public UserDay findUserDay(int user_id, int day_id);

@@ -44,7 +44,7 @@ public class CommonController {
         UserDay userDay = new UserDay();
         userDay.setDay(day);
         userDay.setUser(user);
-        userDay.setShift(this.userDayService.getNeededShift(day));
+        userDay.setShift(this.userDayService.getNeededShift(day, false));
         userDay.setAnyShift(true);
         userDay.setDisponibility(true);
         this.userDayService.addUserDay(userDay);

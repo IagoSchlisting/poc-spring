@@ -154,6 +154,7 @@ public class PageController extends CommonController {
         for(Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
                 model.addAttribute("userDays", userDayService.listUserDays(id));
+                model.addAttribute("shift", this.userDayService.getNeededShift(this.dayService.getDayById(id), true));
                 return "owner-day-manager";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
                 model.addAttribute("member", true);
