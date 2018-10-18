@@ -30,7 +30,7 @@ public class PeriodServiceImp  implements PeriodService {
         if(period.getNumberDayNormal() < 0 || period.getNumberDaySpecial() < 0 || period.getNumberLateNormal() < 0 || period.getNumberLateSpecial() < 0){
             throw  new IllegalArgumentException("Not possible to create period with negative param values!");
         }
-        //REFACTORING NEEDED AFTER
+
         User principal = this.userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
         int totalMembers = this.userService.listUsers(period.getTeam().getId(), principal.getId()).size();
 

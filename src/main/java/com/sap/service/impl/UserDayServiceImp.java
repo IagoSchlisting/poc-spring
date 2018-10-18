@@ -35,7 +35,6 @@ public class UserDayServiceImp implements UserDayService {
     public UserDay updateUserDay(UserDayDTO userDay){
 
         String error = "Not possible to bound user to the shift, number required already fulfilled.";
-
         if(!userDay.getDisponibility()){
             userDay.setShift("none");
         }
@@ -118,7 +117,7 @@ public class UserDayServiceImp implements UserDayService {
                 totalDay++;
             }
         }
-        return requireDay - totalDay;
+        return requireDay - totalDay < 0 ? 0 : requireDay - totalDay;
     }
 
     private Integer availableOnLate(Day day){
@@ -130,12 +129,11 @@ public class UserDayServiceImp implements UserDayService {
                 totalLate++;
             }
         }
-        return requireLate - totalLate;
+        return requireLate - totalLate < 0 ? 0 : requireLate - totalLate;
     }
 
     @Override
     public Shift getNeededShift(Day day, Boolean notification){
-        // Verifies which shift needs more members
         if (this.availableOnDay(day) > this.availableOnLate(day)) {
             return Shift.DAY;
         } else if (this.availableOnDay(day) < this.availableOnLate(day)) {

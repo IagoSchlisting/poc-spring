@@ -1,22 +1,13 @@
 package com.sap.controllers;
-
-import com.sap.dto.UserDTO;
 import com.sap.models.Day;
-import com.sap.models.Shift;
 import com.sap.models.User;
 import com.sap.models.UserDay;
-import com.sap.service.UserDayService;
-import com.sap.service.UserService;
-import org.springframework.context.annotation.Bean;
+import com.sap.service.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-
 import javax.annotation.Resource;
-import javax.validation.constraints.Null;
-import java.util.List;
+
 
 @Controller
 public class CommonController {
@@ -25,6 +16,17 @@ public class CommonController {
     protected UserService userService;
     @Resource
     protected UserDayService userDayService;
+    @Resource
+    protected DayService dayService;
+    @Resource
+    protected TeamService teamService;
+    @Resource
+    protected PeriodService periodService;
+    @Resource
+    protected NotificationService notificationService;
+    @Resource
+    protected UserNotificationService userNotificationService;
+
 
     /**
      * Get current session user

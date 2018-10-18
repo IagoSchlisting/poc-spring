@@ -42,7 +42,6 @@ public class DayServiceImp  implements DayService {
             throw new IllegalArgumentException("Not possible to update day with negative param values!");
         }
 
-        //REFACTORING NEEDED AFTER
         User principal = this.userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
         int totalMembers = this.userService.listUsers(day.getPeriod().getTeam().getId(), principal.getId()).size();
 

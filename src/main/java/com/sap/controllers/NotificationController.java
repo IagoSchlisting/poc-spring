@@ -3,28 +3,21 @@ package com.sap.controllers;
 import com.sap.models.Notification;
 import com.sap.models.User;
 import com.sap.models.UserNotification;
-import com.sap.service.NotificationService;
-import com.sap.service.UserNotificationService;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.annotation.Resource;
-import javax.persistence.Id;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
 public class NotificationController extends CommonController{
 
-    @Resource
-    private NotificationService notificationService;
-    @Resource
-    private UserNotificationService userNotificationService;
-
+    /**
+     * Add new notifications in the database
+     * @param redirectAttributes
+     * @param notification
+     * @return redirects to notification page with success or error message
+     */
     @RequestMapping(value = "/notification/add", method = RequestMethod.POST)
     public RedirectView addNotification(RedirectAttributes redirectAttributes, Notification notification){
         try{
@@ -38,6 +31,12 @@ public class NotificationController extends CommonController{
         return new RedirectView("/notification");
     }
 
+    /**
+     * Deletes specific notification
+     * @param id
+     * @param redirectAttributes
+     * @return redirects to notification page with success or error message
+     */
     @RequestMapping(value = "/notification/delete/{id}", method = RequestMethod.GET)
     public RedirectView removeNotification(@PathVariable("id") int id, RedirectAttributes redirectAttributes){
         try {
@@ -50,6 +49,10 @@ public class NotificationController extends CommonController{
         return new RedirectView("/notification");
     }
 
+    /**
+     * After creating the notification itself, the system must bound each user from that team's notification to the notification
+     * @param notification
+     */
     private void boundNotificationToUser(Notification notification){
         List<User> users = this.userService.listUsers(this.getPrincipalUser().getTeam().getId());
         UserNotification userNotification;
@@ -63,6 +66,11 @@ public class NotificationController extends CommonController{
         }
     }
 
+    /**
+     * When a notification is closed in the "x" button by some user, the intermediary table between notification and user
+     * (UserNotification) must set the attribute "visualized' to true so it doesn't appear for the same user again against his will .
+     * @param notification
+     */
     @ResponseBody
     @RequestMapping(value = "/visualize/notification", method = RequestMethod.POST)
     public void setNotificationAsVisualized(@RequestBody Notification notification){

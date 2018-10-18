@@ -4,8 +4,6 @@ import com.sap.dto.DayDTO;
 import com.sap.dto.PeriodDTO;
 import com.sap.dto.UserDayDTO;
 import com.sap.models.*;
-import com.sap.service.DayService;
-import com.sap.service.PeriodService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,19 +11,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.util.List;
 
-
 @Controller
 public class CalendarController extends CommonController {
-
-    @Resource
-    private PeriodService periodService;
-    @Resource
-    private DayService dayService;
 
     /**
      * Allows owner to create a new period if the same respects the validations
@@ -127,6 +117,12 @@ public class CalendarController extends CommonController {
         return new RedirectView("/calendar/admin");
     }
 
+    /**
+     * Responsible for saving all days from the configuration page simultaneously
+     * @param request
+     * @param redirectAttributes
+     * @return redirect to the same page with success or error message
+     */
     @RequestMapping(value = "/calendar/configure", method = RequestMethod.POST)
     public RedirectView configurePeriod(WebRequest request, RedirectAttributes redirectAttributes){
         try{

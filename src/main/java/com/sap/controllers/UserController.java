@@ -9,9 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
-
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,12 +19,7 @@ public class UserController extends CommonController {
 
     @Resource
     private RoleService roleService;
-    @Resource
-    private TeamService teamService;
-    @Resource
-    private PeriodService periodService;
-    @Resource
-    private DayService dayService;
+
 
     /**
      * Method responsible for registering a new OWNER in the system. New member type users don't pass through this method.
@@ -121,10 +114,9 @@ public class UserController extends CommonController {
         try{
             user.setRoles(giveRoles(false));
             user.setTeam(this.getPrincipalUser().getTeam());
-            user.setPassword("password");
-            user.setConfirmPassword("password");
-            User new_user = this.userService.addUser(user);
-            //this.boundNewUserToPeriods(new_user);
+            user.setPassword("123");
+            user.setConfirmPassword("123");
+            this.userService.addUser(user);
             redirectAttributes.addFlashAttribute("msg", "New member registered successfully!");
         }
         catch (IllegalArgumentException e){
@@ -132,24 +124,6 @@ public class UserController extends CommonController {
         }
         return new RedirectView("/user/add");
     }
-
-//    /**
-//     * Responsible for bounding new created users to all periods created by the owner
-//     * @param user
-//     */
-//    private void boundNewUserToPeriods(User user){
-//        List<Period> periods = this.periodService.listPeriods(user.getTeam().getId());
-//        List<Day> days;
-//
-//        for(Period period : periods){
-//            days = this.dayService.listDays(period.getId());
-//            for(Day day: days){
-//                if(!day.getDay().isBefore(LocalDate.now())){
-//                    this.createUserDay(user, day);
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Responsible for edit member type users

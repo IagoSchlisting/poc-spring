@@ -1,32 +1,16 @@
 package com.sap.controllers;
 
 import com.sap.models.*;
-import com.sap.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.annotation.Resource;
 import java.util.List;
 
 @Controller
 public class PageController extends CommonController {
-
-    @Resource
-    private PeriodService periodService;
-    @Resource
-    private TeamService teamService;
-    @Resource
-    private DayService dayService;
-    @Resource
-    private NotificationService notificationService;
-    @Resource
-    private UserNotificationService userNotificationService;
-
-
 
     /**
      * Login validation method
@@ -50,7 +34,9 @@ public class PageController extends CommonController {
     }
 
     /**
-     * Verify if user is from owner or member type and redirects accordingly
+     * Verify if user is an owner or an member and redirects accordingly
+     * Furthermore, this method is responsible for treating the notification's logic,
+     * in other words, it defines when a notification must or must not appear to the user
      * @param model
      * @return principal owner's or member's page
      */
@@ -101,6 +87,7 @@ public class PageController extends CommonController {
         return "login";
     }
 
+
     /**
      * Only redirects to the add user's page
      * @return add page
@@ -134,9 +121,8 @@ public class PageController extends CommonController {
         return "changepass";
     }
 
-
     /**
-     * Renderize the calendar-admin page
+     * Render the calendar-admin page
      * @param model
      * @return calendar page
      */
@@ -148,7 +134,7 @@ public class PageController extends CommonController {
     }
 
     /**
-     * Renderize the period page
+     * Render the period page
      * @param id
      * @param model
      * @return period page
@@ -164,7 +150,7 @@ public class PageController extends CommonController {
     }
 
     /**
-     * Renderize day page
+     * Render the day page
      * @param id
      * @param model
      * @return day page
@@ -203,6 +189,12 @@ public class PageController extends CommonController {
         return "login";
     }
 
+    /**
+     * Render the configuration page of an specific period
+     * @param id
+     * @param model
+     * @return calendar-configure page
+     */
     @RequestMapping(value = "/calendar/configure/{id}", method = RequestMethod.GET)
     public String CalendarConfigurePage(@PathVariable("id") int id, Model model){
         if(this.periodService.notAuthorized(id)){return "errors/403";}
@@ -210,6 +202,11 @@ public class PageController extends CommonController {
         return "calendar-configure";
     }
 
+    /**
+     * Render the notification page
+     * @param model
+     * @return notification page
+     */
     @RequestMapping(value = "/notification", method = RequestMethod.GET)
     public  String NotificationsPage(Model model){
         int team_id  = this.getPrincipalUser().getTeam().getId();
@@ -219,7 +216,7 @@ public class PageController extends CommonController {
 
 
     /**
-     * Redirects to 403 page
+     * Render to 403 page
      * @return not authorized page
      */
     @RequestMapping("/403")
