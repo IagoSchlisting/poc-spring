@@ -35,7 +35,7 @@
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <input type="hidden" name="msg" id="msg" class="form-control"
                                    value=" Day <span class='variable'> [ ${day.day} ] </span> needs someone in the <span class='variable'> [ ${shift} ] </span> shift, <a href='/day/${day.id}'>click here</a> to help us.">
-                            <button class="btn btn-info m-top"> <span class="glyphicon glyphicon-info-sign"></span>&nbsp;  Active Helper</button>
+                            <button class="btn btn-info m-top"> <span class="glyphicon glyphicon-info-sign"></span>&nbsp;  Allocation Helper</button>
                         </form>
                     </c:if>
                 </td>

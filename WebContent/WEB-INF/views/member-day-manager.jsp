@@ -1,5 +1,14 @@
 <%@ include file="templates/header.jsp"%>
 
+<c:if test="${shift != 'NONE'}">
+    <div class="alert alert-warning" role="alert">
+        <span class="glyphicon glyphicon-info-sign"></span>&nbsp;&nbsp;&nbsp; Notification: <strong> This day needs someone in the <span class='variable'> [ ${shift} ] </span> shift, please select it and click save. </strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</c:if>
+
 <div class="panel panel-default">
     <div class="panel-heading" style="min-height: 45px">
         <div class="col-md-6"> Day Manager &nbsp;&nbsp;&nbsp; <span class="date">${day.day}</span> </div>

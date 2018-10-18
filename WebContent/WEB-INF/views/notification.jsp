@@ -13,7 +13,7 @@
                 <th> Message </th>
                 <th width="150"> Actions </th>
             </tr>
-            <c:forEach var="notification" items="${notifications}">
+            <c:forEach var="notification" items="${_notifications}">
                 <tr>
                     <td> ${notification.id} </td>
                     <td> ${notification.msg} </td>

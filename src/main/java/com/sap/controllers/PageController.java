@@ -23,6 +23,8 @@ public class PageController extends CommonController {
     private DayService dayService;
     @Resource
     private NotificationService notificationService;
+    @Resource
+    private UserNotificationService userNotificationService;
 
 
 
@@ -60,13 +62,36 @@ public class PageController extends CommonController {
         //List<Notification> notifications = this.notificationService.listNotifications(principal.getTeam().getId());
 
         List<Notification> notifications = this.notificationService.listNotificationsForUser(principal.getId());
-        model.addAttribute("notifications", notifications);
 
         for (Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
+
+                model.addAttribute("notifications", notifications);
                 model.addAttribute("members", this.userService.listUsers(principal.getTeam().getId(), principal.getId()));
                 return "ownerpage";
+
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
+
+                for(Notification notification: notifications){
+                    for(UserDay userDay : this.userDayService.listUserDaysByUser(principal.getId())){
+
+                        String day = userDay.getDay().getDay().toString();
+                        String shift = userDay.getShift().toString();
+
+                        if(notification.getMsg().contains(day) && notification.getMsg().contains(shift)){
+                            UserNotification userNotification = this.userNotificationService.getUserNotification(notification.getId(), principal.getId());
+                            userNotification.setVisualized(true);
+                            this.userNotificationService.updateUserNotification(userNotification);
+
+                            if(this.userDayService.getNeededShift(userDay.getDay(), true) == Shift.NONE){
+                                this.notificationService.removeNotification(notification);
+                            }
+                        }
+
+                    }
+                }
+
+                model.addAttribute("notifications", this.notificationService.listNotificationsForUser(principal.getId()));
                 model.addAttribute("member", true);
                 model.addAttribute("periods", periodService.listPeriods(principal.getTeam().getId()));
                 return "memberpage";
@@ -149,15 +174,28 @@ public class PageController extends CommonController {
         User principal = this.getPrincipalUser();
         model.addAttribute("day", dayService.getDayById(id));
 
+        Shift neededShift = this.userDayService.getNeededShift(this.dayService.getDayById(id), true);
         if(this.dayService.notAuthorized(id)){return "errors/403";}
 
         for(Role role: principal.getRoles()){
             if(new String(role.getRole()).equals("ROLE_OWNER")){
                 model.addAttribute("userDays", userDayService.listUserDays(id));
-                model.addAttribute("shift", this.userDayService.getNeededShift(this.dayService.getDayById(id), true));
+                model.addAttribute("shift", neededShift);
                 return "owner-day-manager";
             }else if(new String(role.getRole()).equals("ROLE_MEMBER")){
                 model.addAttribute("member", true);
+
+                List<UserDay> userDays = this.userDayService.listUserDays(id);
+                for(UserDay userDay: userDays){
+                    if(userDay.getUser().getId() == principal.getId()){
+                        if(userDay.getShift() != neededShift){
+                            model.addAttribute("shift", neededShift);
+                        }else{
+                            model.addAttribute("shift", "NONE");
+                        }
+                    }
+                }
+
                 model.addAttribute("userDay", userDayService.findUserDay(principal.getId(), id));
                 return "member-day-manager";
             }
@@ -175,7 +213,7 @@ public class PageController extends CommonController {
     @RequestMapping(value = "/notification", method = RequestMethod.GET)
     public  String NotificationsPage(Model model){
         int team_id  = this.getPrincipalUser().getTeam().getId();
-        model.addAttribute("notifications", this.notificationService.listNotifications(team_id));
+        model.addAttribute("_notifications", this.notificationService.listNotifications(team_id));
         return "notification";
     }
 
