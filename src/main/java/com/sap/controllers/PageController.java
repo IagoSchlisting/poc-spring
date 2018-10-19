@@ -1,5 +1,6 @@
 package com.sap.controllers;
 
+import com.sap.dto.DayDTO;
 import com.sap.models.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -145,7 +148,30 @@ public class PageController extends CommonController {
         if(this.getPrincipalUser().getRoles().get(1).getRole().equals("ROLE_MEMBER")){
             model.addAttribute("member", true);
         }
-        model.addAttribute("days", this.dayService.listDays(id));
+        List<DayDTO> daysDTO = new ArrayList<DayDTO>();
+        DayDTO dayDTO;
+        List<Day> days = this.dayService.listDays(id);
+
+        for(Day day: days){
+            dayDTO = new DayDTO();
+
+            dayDTO.setId(day.getId());
+            dayDTO.setDay(day.getDay());
+            dayDTO.setNumberDay(day.getNumberDay());
+            dayDTO.setNumberLate(day.getNumberLate());
+            dayDTO.setSpecial(day.getSpecial());
+            dayDTO.setMemberdays(day.getMemberdays());
+
+            if(this.userDayService.getNeededShift(day, true) == Shift.NONE){
+                dayDTO.setCompleted(true);
+            }else{
+                dayDTO.setCompleted(false);
+            }
+
+            daysDTO.add(dayDTO);
+        }
+
+        model.addAttribute("days", daysDTO);
         return "period-days";
     }
 

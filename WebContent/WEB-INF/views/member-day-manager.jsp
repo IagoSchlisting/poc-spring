@@ -11,7 +11,7 @@
 
 <div class="panel panel-default">
     <div class="panel-heading" style="min-height: 45px">
-        <div class="col-md-6"> Day Manager &nbsp;&nbsp;&nbsp; <span class="date">${day.day}</span> </div>
+        <div class="col-md-6"> Day Manager &nbsp;&nbsp;&nbsp; <span class="date">${day.day}</span> ${day.special ? '<span class="wh"> This is a special day! </span>' : '' } </div>
     </div>
     <div class="panel-body">
         <%@ include file="templates/messages.jsp"%>

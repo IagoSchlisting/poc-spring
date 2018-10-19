@@ -34,7 +34,7 @@
                             <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="/calendar/manage/${period.id}">Supervise</a></li>
-                            <li><a href="/calendar/configure/${period.id}">Configure</a></li>
+                            <li><a href="/calendar/configure/${period.id}">Settings</a></li>
                             <li><a href="/calendar/delete/${period.id}">Delete</a></li>
                         </ul>
                     </div>

@@ -8,7 +8,7 @@
         <div style="margin-left: 10%">
             <c:forEach var="day" items="${days}">
                 <a href="/day/${day.id}">
-                <div class="col-md-2 calendar ${day.special ? 'special' : ''}">
+                <div class="col-md-2 calendar ${day.special ? 'special' : ''} ${day.completed ? 'completed' : 'not-completed'}">
                     <table class="table">
                         <tr><td align="center">${day.day}</td></tr>
                         <tr>

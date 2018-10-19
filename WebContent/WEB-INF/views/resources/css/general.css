@@ -54,6 +54,17 @@
 
 .m-top{margin-top: 20px;}
 
-.special{background-color: #d51b2e14;}
+.special{border: 1px solid red;}
+.not-completed{background-color: #d51b2e14;}
+.completed{background-color: #92f69240;}
 
 .variable{color: steelblue;}
+
+.wh{
+    padding: 2px 20px 4px 20px;
+    /*border: 1px solid black;*/
+    border-radius: 2px;
+    background-color: #ea182e94;
+    color: white;
+    font-size: medium;
+}

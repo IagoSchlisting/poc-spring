@@ -61,6 +61,9 @@ public class UserDayServiceImp implements UserDayService {
                 updated_userDay.setShift(Shift.NONE);
                 updated_userDay.setAnyShift(false);
                 break;
+            case "any":
+                updated_userDay.setAnyShift(true);
+                break;
             default:
                 updated_userDay.setShift(getNeededShift(updated_userDay.getDay(), false));
                 updated_userDay.setAnyShift(true);

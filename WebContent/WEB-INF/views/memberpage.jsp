@@ -9,18 +9,37 @@
             <%@ include file="templates/messages.jsp"%>
             <table class="table table-stripped">
                 <tr>
-                    <th> ID </th>
-                    <th> Start Date </th>
-                    <th> End Date </th>
-                    <th> Actions </th>
+                    <th width="60"> ID </th>
+                    <th width="200"> Start Date </th>
+                    <th width="200"> End Date </th>
+                    <th width="230"> Normal Days </th>
+                    <th width="230"> Weekend or Holidays </th>
+                    <th> Actions  </th>
                 <tr>
                     <c:forEach var="period" items="${periods}">
+
                 <tr>
                     <td> ${period.id} </td>
                     <td> ${period.start}</td>
                     <td> ${period.end}</td>
+                    <td class="success">
+                        <span class="status DAY"> ${period.numberDayNormal}</span>
+                        <span class="status LATE"> ${period.numberLateNormal} </span>
+                    </td>
+                    <td class="danger">
+                        <span class="status DAY"> ${period.numberDaySpecial} </span>
+                        <span class="status LATE" style="margin-left: 2px"> ${period.numberLateSpecial} </span>
+                    </td>
                     <td>
-                        <a href="/calendar/manage/${period.id}" class="btn btn-info"> Manage </a>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Actions
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="/calendar/manage/${period.id}">Supervise</a></li>
+                                <%--<li><a href="/calendar/configure/${period.id}">Configure</a></li>--%>
+                            </ul>
+                        </div>
+
                     </td>
                 </tr>
                 </c:forEach>
